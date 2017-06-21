@@ -1,8 +1,5 @@
 # Sandbox-Jenkins-Plugin
 
-[![Stories in Ready](https://badge.waffle.io/QualiSystems/Sandbox-Jenkins-Plugin.svg?label=ready&title=Ready)](http://waffle.io/QualiSystems/Sandbox-Jenkins-Plugin)
-[![Dependency Status](https://dependencyci.com/github/QualiSystems/Sandbox-Jenkins-Plugin/badge)](https://dependencyci.com/github/QualiSystems/Sandbox-Jenkins-Plugin)
-
 ##Prerequisite
 
 1) cs2018 server must be running.
@@ -14,8 +11,6 @@
 1) open port between Jenkins Slaves and the CloudShell Web Server (82 by default but configurable)
 
 Distributed architecture:
-
-![Alt text](Pics/Jenkinspluginarchitecture.jpg?raw=true)
 
 ## Installation
 1) Download the hpi package from the releases tab
