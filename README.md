@@ -1,16 +1,10 @@
 # Sandbox-Jenkins-Plugin
 
-##Prerequisite
+## Prerequisite
 
 1) cs2018 server must be running.
 
 2) Jenkins server 2.3 and above.
-
-##Architecture
-
-1) open port between Jenkins Slaves and the CloudShell Web Server (82 by default but configurable)
-
-Distributed architecture:
 
 ## Installation
 1) Download the hpi package from the releases tab
