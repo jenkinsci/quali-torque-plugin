@@ -15,7 +15,7 @@
 
 Distributed architecture:
 
-![Alt text](Pics/Jenkinspluginarchitecture.jpg?raw=true)
+![Alt text](images/Jenkinspluginarchitecture.jpg?raw=true)
 
 ## Installation
 1) Download the hpi package from the releases tab

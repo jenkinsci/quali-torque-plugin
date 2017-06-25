@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.cloudshell;
 
 import org.jenkinsci.plugins.cloudshell.service.SandboxAPIService;
+import org.jenkinsci.plugins.cloudshell.service.SandboxAPIServiceImpl;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousStepExecution;
 
@@ -15,7 +16,7 @@ public abstract class SandboxStepExecution<T> extends SynchronousStepExecution<T
 
     protected SandboxStepExecution(@Nonnull StepContext context) throws Exception {
         super(context);
-        sandboxAPIService = new SandboxAPIService(Config.DESCRIPTOR.getCloudShellConnection());
+        sandboxAPIService = Config.CreateSandboxAPIService();
     }
 
     @Override

@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.google.common.collect.ImmutableSet;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import org.jenkinsci.plugins.cloudshell.Messages;
 import org.jenkinsci.plugins.cloudshell.PluginConstants;
 import org.jenkinsci.plugins.cloudshell.SandboxStepExecution;
 import org.jenkinsci.plugins.cloudshell.api.ResponseData;
@@ -46,18 +48,9 @@ public class DeleteSandboxStep extends Step{
 
         @Override
         protected Void run() throws Exception {
-            TaskListener taskListener = getContext().get(TaskListener.class);
-            try
-            {
-                ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
-                if(!res.isSuccessful()){
-                    throw new Exception(res.getError());
-                }
-
-            } catch (Exception e) {
-                taskListener.getLogger().println(e);
-                throw e;
-            }
+            ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
+            if(!res.isSuccessful())
+                throw new AbortException(res.getMessage());
             return null;
         }
     }
@@ -75,7 +68,7 @@ public class DeleteSandboxStep extends Step{
         }
 
         @Override public String getDisplayName() {
-            return PluginConstants.DELETE_SANDBOX_DISPLAY_NAME;
+            return Messages.DeleteSandbox_FuncDisplayName();
         }
 
     }

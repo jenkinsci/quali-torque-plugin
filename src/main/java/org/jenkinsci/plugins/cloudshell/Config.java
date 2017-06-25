@@ -4,6 +4,9 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.cloudshell.service.SandboxAPIService;
+import org.jenkinsci.plugins.cloudshell.service.SandboxAPIServiceImpl;
+import org.jenkinsci.plugins.cloudshell.service.SandboxAPIServiceMock;
 import org.jenkinsci.plugins.cloudshell.service.SandboxServiceConnection;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -20,6 +23,9 @@ public class Config extends AbstractDescribableImpl<Config> {
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+    public static SandboxAPIService CreateSandboxAPIService() throws Exception {
+        return new SandboxAPIServiceMock();//SandboxAPIServiceImpl(DESCRIPTOR.getCloudShellConnection());
+    }
 
     public static final class DescriptorImpl extends Descriptor<Config> {
         private SandboxServiceConnection cloudshellConnection;
@@ -40,7 +46,7 @@ public class Config extends AbstractDescribableImpl<Config> {
         public SandboxServiceConnection getCloudShellConnection() throws Exception {
             if(cloudshellConnection == null)
             {
-                throw new Exception("CloudShell Connection was not set");
+                throw new Exception(Messages.APIConnectionNotConfigured());
             }
             return cloudshellConnection;
         }

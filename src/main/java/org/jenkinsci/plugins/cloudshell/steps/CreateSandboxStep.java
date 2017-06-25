@@ -1,19 +1,19 @@
 package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.google.common.collect.ImmutableSet;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.cloudshell.Config;
+import org.jenkinsci.plugins.cloudshell.Messages;
 import org.jenkinsci.plugins.cloudshell.PluginConstants;
 import org.jenkinsci.plugins.cloudshell.SandboxStepExecution;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cloudshell.api.ResponseData;
-import org.jenkinsci.plugins.cloudshell.service.*;
+import org.jenkinsci.plugins.cloudshell.api.Sandbox;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -21,58 +21,20 @@ import java.util.Set;
 /**
  * Created by shay-k on 20/06/2017.
  */
-public class CreateSandboxStep extends Step{
-
-    private final String blueprint;
-    private String stage;
-    private String sandboxName;
-    private String serviceNameForHealthCheck;
+public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
 
     @DataBoundConstructor
     public CreateSandboxStep(@Nonnull String blueprint)
     {
-        this.blueprint = blueprint;
+        super(blueprint);
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, this.blueprint,this.sandboxName, this.stage, this.serviceNameForHealthCheck);
+        return new Execution(stepContext, getBlueprint(),getSandboxName(), getStage(), getServiceNameForHealthCheck());
     }
 
-    public String getBlueprint() {
-        return blueprint;
-    }
-
-    public String getStage() {
-        return stage;
-    }
-
-    public String getSandboxName() {
-        return sandboxName;
-    }
-
-    public String getServiceNameForHealthCheck(){
-        return serviceNameForHealthCheck;
-    }
-
-    @DataBoundSetter
-    public void setSandboxName(String sandboxName) {
-        this.sandboxName = sandboxName;
-    }
-
-    @DataBoundSetter
-    public void setServiceNameForHealthCheck(String serviceNameForHealthCheck) {
-        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
-    }
-
-    @DataBoundSetter
-    public void setStage(String stage) {
-        this.stage = stage;
-    }
-
-
-    public static class Execution extends SandboxStepExecution<String> {
-        private static final long serialVersionUID = 1L;
+    public static class Execution extends SandboxStepExecution<Sandbox> {
         private final String blueprint;
         private final String sandboxName;
         private final String stage;
@@ -88,26 +50,28 @@ public class CreateSandboxStep extends Step{
 
 
         @Override
-        protected String run() throws Exception {
-            TaskListener taskListener = getContext().get(TaskListener.class);
-            try
-            {
-                CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),getSandboxName(),getStage());
-                ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
-                if(!res.isSuccessful()){
-                    throw new Exception(res.getError());
-                }
-                String sandboxId = res.getData().id;
-                if(this.serviceNameForHealthCheck != null) {
-                    sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck, 600);
-                }
+        protected Sandbox run() throws Exception {
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,sandboxName,stage);
+            ResponseData<CreateSandboxResponse> res;
+            if(this.serviceNameForHealthCheck != null)
+                res = sandboxAPIService.createSandbox(req,this.serviceNameForHealthCheck, 10);
+            else
+                res = sandboxAPIService.createSandbox(req);
+            if(!res.isSuccessful())
+                throw new AbortException(res.getMessage());
 
-                return sandboxId;
 
-            } catch (Exception e) {
-                taskListener.getLogger().println(e);
-                throw e;
+            String sandboxId = res.getData().id;
+            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
+            if(!sandboxesRes.isSuccessful()) {
+                throw new AbortException(res.getMessage());
             }
+            for(Sandbox sandbox :sandboxesRes.getData()){
+                if (sandbox.id == sandboxId){
+                    return sandbox;
+                }
+            }
+            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
         public String getBlueprint() {
@@ -121,7 +85,6 @@ public class CreateSandboxStep extends Step{
         public String getStage() {
             return stage;
         }
-
     }
 
     @Extension
@@ -133,11 +96,11 @@ public class CreateSandboxStep extends Step{
         }
 
         @Override public String getFunctionName() {
-            return PluginConstants.CREATE_SANDBOX_FUNC_NAME;
+            return  PluginConstants.CREATE_SANDBOX_FUNC_NAME;
         }
 
         @Override public String getDisplayName() {
-            return PluginConstants.CREATE_SANDBOX_DISPLAY_NAME;
+            return Messages.CreateSandbox_FuncDisplayName();
         }
 
     }

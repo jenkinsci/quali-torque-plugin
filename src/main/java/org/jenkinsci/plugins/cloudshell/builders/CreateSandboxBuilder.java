@@ -1,36 +1,41 @@
 package org.jenkinsci.plugins.cloudshell.builders;
 
+import com.google.gson.Gson;
+import hudson.AbortException;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Result;
+import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import org.jenkinsci.plugins.cloudshell.Config;
+import org.jenkinsci.plugins.cloudshell.Messages;
 import org.jenkinsci.plugins.cloudshell.PluginConstants;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cloudshell.api.ResponseData;
+import org.jenkinsci.plugins.cloudshell.api.Sandbox;
 import org.jenkinsci.plugins.cloudshell.service.SandboxAPIService;
+import org.jenkinsci.plugins.cloudshell.service.SandboxAPIServiceImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public class CreateSandboxBuilder extends Builder {
 
     private final String blueprintName;
     private final String sandboxName;
     private final String stage;
-    private transient SandboxAPIService sandboxAPIService = null;
+    private final String serviceNameForHealthCheck;
+    private transient SandboxAPIService sandboxAPIService= null;
 
     @DataBoundConstructor
-    public CreateSandboxBuilder(String blueprintName, String sandboxName, String stage)
+    public CreateSandboxBuilder(String blueprintName, String sandboxName, String stage, String serviceNameForHealthCheck)
     {
         this.blueprintName = blueprintName;
         this.sandboxName = sandboxName;
         this.stage = stage;
+        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
     }
 
     public String getBlueprintName() {
@@ -42,27 +47,52 @@ public class CreateSandboxBuilder extends Builder {
     public String getStage() {
         return stage;
     }
-
-    public SandboxAPIService getSandboxAPIService() throws Exception {
-        if(sandboxAPIService == null)
-            sandboxAPIService = new SandboxAPIService(Config.DESCRIPTOR.getCloudShellConnection());
-        return sandboxAPIService;
+    public String getServiceNameForHealthCheck() {
+        return serviceNameForHealthCheck;
     }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        try
-        {
-            CreateSandboxRequest req = new CreateSandboxRequest(getBlueprintName(),getSandboxName(),getStage());
-            ResponseData<CreateSandboxResponse> res = getSandboxAPIService().createSandbox(req);
-            if(!res.isSuccessful()){
-                throw new Exception(res.getError());
+
+        try {
+            Sandbox sandbox = createSandbox();
+            CreateSandboxAction createSandboxAction = build.getAction(CreateSandboxAction.class);
+            if(createSandboxAction == null) {
+                createSandboxAction = new CreateSandboxAction();
+                build.addAction(createSandboxAction);
             }
+            createSandboxAction.addSandboxId(sandbox.id);
+
+            String sandboxJson = new Gson().toJson(sandbox).toString();
+            build.addAction(new VariableInjectionAction(PluginConstants.SANDBOX_ENVVAR,sandboxJson));
             return true;
         } catch (Exception e) {
-            listener.getLogger().println(e);
             build.setResult(Result.FAILURE);
+            e.printStackTrace(listener.getLogger());
             return false;
         }
+    }
+    private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
+        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprintName(),getSandboxName(),getStage());
+        ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
+        if(!res.isSuccessful()){
+            throw new AbortException(res.getMessage());
+        }
+
+        String sandboxId = res.getData().id;
+        if(getServiceNameForHealthCheck() != null)
+            sandboxAPIService.waitForService(sandboxId, getServiceNameForHealthCheck(),10);
+
+        ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
+        if(!sandboxesRes.isSuccessful()) {
+            throw new AbortException(res.getMessage());
+        }
+        for(Sandbox sandbox :sandboxesRes.getData()){
+            if (sandbox.id == sandboxId){
+                return sandbox;
+            }
+        }
+        throw new AbortException(String.format("sandbox with id '%s' not exists",sandboxId));
     }
 
     @Override
@@ -70,7 +100,7 @@ public class CreateSandboxBuilder extends Builder {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    @Extension
+   // @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         public DescriptorImpl(){
             load();
@@ -78,7 +108,7 @@ public class CreateSandboxBuilder extends Builder {
 
         @Override
         public String getDisplayName() {
-            return PluginConstants.CREATE_SANDBOX_DISPLAY_NAME;
+            return Messages.CreateSandbox_FuncDisplayName();
         }
 
         @Override

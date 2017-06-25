@@ -9,7 +9,7 @@ import retrofit2.http.*;
 /**
  * Created by shay-k on 21/06/2017.
  */
-public interface SandboxAPI {
+public interface SandboxAPISpec {
     @GET("api/Sandbox")
     Call<Sandbox[]> getSandboxes();
 

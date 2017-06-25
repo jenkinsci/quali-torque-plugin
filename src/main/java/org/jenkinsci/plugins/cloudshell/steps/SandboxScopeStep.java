@@ -1,74 +1,39 @@
 package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cloudshell.Config;
+import org.jenkinsci.plugins.cloudshell.Messages;
 import org.jenkinsci.plugins.cloudshell.PluginConstants;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cloudshell.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cloudshell.api.ResponseData;
+import org.jenkinsci.plugins.cloudshell.api.Sandbox;
 import org.jenkinsci.plugins.cloudshell.service.SandboxAPIService;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
-public class SandboxScopeStep extends Step {
-
-    //private static final Logger LOGGER = Logger.getLogger(SandboxScopeStep.class.getName());
-    private final String blueprint;
-    private String stage;
-    private String sandboxName;
-    private String serviceNameForHealthCheck;
+public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
 
     @DataBoundConstructor
     public SandboxScopeStep(@Nonnull String blueprint)
     {
-        this.blueprint = blueprint;
-    }
-
-    public String getBlueprint() {
-        return blueprint;
-    }
-
-    public String getStage() {
-        return stage;
-    }
-
-    public String getSandboxName() {
-        return sandboxName;
-    }
-
-    public String getServiceNameForHealthCheck(){
-        return serviceNameForHealthCheck;
-    }
-
-    @DataBoundSetter
-    public void setSandboxName(String sandboxName) {
-        this.sandboxName = sandboxName;
-    }
-
-    @DataBoundSetter
-    public void setServiceNameForHealthCheck(String serviceNameForHealthCheck) {
-        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
-    }
-
-    @DataBoundSetter
-    public void setStage(String stage) {
-        this.stage = stage;
+        super(blueprint);
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new SandboxScopeStep.Execution(stepContext, this.blueprint,this.sandboxName, this.stage, this.serviceNameForHealthCheck);
+        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getSandboxName(), getStage(), getServiceNameForHealthCheck());
     }
 
     public static class Execution extends AbstractStepExecutionImpl {
@@ -87,16 +52,27 @@ public class SandboxScopeStep extends Step {
             this.sandboxName = sandboxName;
             this.stage = stage;
             this.serviceNameForHealthCheck = serviceNameForHealthCheck;
-            sandboxAPIService = new SandboxAPIService(Config.DESCRIPTOR.getCloudShellConnection());
+            sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
 
         @Override
         public boolean start() throws Exception {
-            createSandbox();
+            Sandbox sandbox = createSandbox();
+            final EnvVars env = new EnvVars();
+            String sandboxJson = new Gson().toJson(sandbox).toString();
+            env.override(PluginConstants.SANDBOX_ENVVAR, sandboxJson);
+
+
+            EnvironmentExpander expander = new EnvironmentExpander() {
+                @Override
+                public void expand(@Nonnull EnvVars envVars) throws IOException, InterruptedException {
+                    envVars.overrideAll(env);
+                }
+            };
             getContext().newBodyInvoker().
-                    withContext(EnvironmentExpander.merge(getContext().get(EnvironmentExpander.class), new EnvExpander(sandboxId))).
-                    withCallback(new Callback(sandboxId,sandboxAPIService)).
+                    withContext(EnvironmentExpander.merge(getContext().get(EnvironmentExpander.class), expander)).
+                    withCallback(new Callback(sandboxId, sandboxAPIService)).
                     start();
             return false;
         }
@@ -104,45 +80,38 @@ public class SandboxScopeStep extends Step {
         @Override
         public void stop(@Nonnull Throwable throwable) throws Exception {
             if (sandboxId != null) {
-                deleteSandbox(sandboxId,sandboxAPIService,getContext());
+                deleteSandbox(sandboxId, sandboxAPIService,getContext());
             }
         }
 
 
-        private boolean createSandbox() throws Exception {
-            TaskListener taskListener = getContext().get(TaskListener.class);
-            try
-            {
-                CreateSandboxRequest req = new CreateSandboxRequest(blueprint,sandboxName,stage);
-                ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
-                if(!res.isSuccessful()){
-                    throw new Exception(res.getError());
-                }
-
-                sandboxId = res.getData().id;
-                if(this.serviceNameForHealthCheck != null) {
-                    sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck, 600);
-                }
-
-            } catch (Exception e) {
-                taskListener.getLogger().println(e);
-                throw e;
+        private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,sandboxName,stage);
+            ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
+            if(!res.isSuccessful()){
+                throw new AbortException(res.getMessage());
             }
-            return false;
+
+            sandboxId = res.getData().id;
+            if(this.serviceNameForHealthCheck != null)
+                sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
+
+            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
+            if(!sandboxesRes.isSuccessful()) {
+                throw new AbortException(res.getMessage());
+            }
+            for(Sandbox sandbox :sandboxesRes.getData()){
+                if (sandbox.id == sandboxId){
+                    return sandbox;
+                }
+            }
+            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
-        private static void deleteSandbox(String sandboxId, SandboxAPIService sandboxAPIService,StepContext stepContext) throws Exception {
-            TaskListener taskListener = stepContext.get(TaskListener.class);
-            try
-            {
-                ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
-                if(!res.isSuccessful()){
-                    throw new Exception(res.getError());
-                }
-            } catch (Exception e) {
-                taskListener.getLogger().println(e);
-                throw e;
-            }
+        private static void deleteSandbox(String sandboxId, SandboxAPIService sandboxAPIService, StepContext stepContext) throws Exception {
+            ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
+            if(!res.isSuccessful())
+                throw new AbortException(res.getError());
         }
 
         private static class Callback extends BodyExecutionCallback.TailCall {
@@ -162,21 +131,6 @@ public class SandboxScopeStep extends Step {
         }
 
     }
-
-    private static final class EnvExpander extends EnvironmentExpander {
-        private static final long serialVersionUID = 1;
-        private final Map<String,String> overrides;
-        private EnvExpander(String sandboxId) {
-            this.overrides = new HashMap<>();
-            this.overrides.put("SANDBOX_ID", sandboxId);
-        }
-
-        @Override
-        public void expand(@Nonnull EnvVars envVars) throws IOException, InterruptedException {
-            envVars.overrideAll(overrides);
-        }
-    }
-
     @Extension
     public static class Descriptor extends StepDescriptor {
 
@@ -192,7 +146,7 @@ public class SandboxScopeStep extends Step {
 
         @Override
         public String getDisplayName() {
-            return PluginConstants.WITH_SANDBOX_DISPLAY_NAME;
+            return Messages.WithSandbox_FuncDisplayName();
         }
 
         @Override
