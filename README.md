@@ -1,9 +1,6 @@
 # Sandbox-Jenkins-Plugin
 
-[![Stories in Ready](https://badge.waffle.io/QualiSystems/Sandbox-Jenkins-Plugin.svg?label=ready&title=Ready)](http://waffle.io/QualiSystems/Sandbox-Jenkins-Plugin)
-[![Dependency Status](https://dependencyci.com/github/QualiSystems/Sandbox-Jenkins-Plugin/badge)](https://dependencyci.com/github/QualiSystems/Sandbox-Jenkins-Plugin)
-
-##Prerequisite
+## Prerequisite
 
 1) cs2018 server must be running.
 
