@@ -17,10 +17,9 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
     public ResponseData<CreateSandboxResponse> createSandbox(CreateSandboxRequest req) throws IOException {
         CreateSandboxResponse res = new CreateSandboxResponse();
         res.id= UUID.randomUUID().toString();
-        res.name = req.sandbox_name;
         Sandbox sandbox = new Sandbox();
         sandbox.id = res.id;
-        sandbox.name = res.name;
+        sandbox.name = "sandbox-"+res.id;
         sandboxes.add(sandbox);
         return ResponseData.ok(res,200);
     }

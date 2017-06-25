@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.google.common.collect.ImmutableSet;
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -31,19 +32,17 @@ public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getBlueprint(),getSandboxName(), getStage(), getServiceNameForHealthCheck());
+        return new Execution(stepContext, getBlueprint(), getStage(), getServiceNameForHealthCheck());
     }
 
     public static class Execution extends SandboxStepExecution<Sandbox> {
         private final String blueprint;
-        private final String sandboxName;
         private final String stage;
         private String serviceNameForHealthCheck;
 
-        protected Execution(@Nonnull StepContext context, String blueprint, String sandboxName, String stage, String serviceNameForHealthCheck) throws Exception {
+        protected Execution(@Nonnull StepContext context, String blueprint, String stage, String serviceNameForHealthCheck) throws Exception {
             super(context);
             this.blueprint = blueprint;
-            this.sandboxName = sandboxName;
             this.stage = stage;
             this.serviceNameForHealthCheck = serviceNameForHealthCheck;
         }
@@ -51,7 +50,7 @@ public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
 
         @Override
         protected Sandbox run() throws Exception {
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,sandboxName,stage);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
             ResponseData<CreateSandboxResponse> res;
             if(this.serviceNameForHealthCheck != null)
                 res = sandboxAPIService.createSandbox(req,this.serviceNameForHealthCheck, 10);
@@ -76,10 +75,6 @@ public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
 
         public String getBlueprint() {
             return blueprint;
-        }
-
-        public String getSandboxName() {
-            return sandboxName;
         }
 
         public String getStage() {

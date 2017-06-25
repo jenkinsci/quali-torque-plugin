@@ -28,9 +28,6 @@ THE SOFTWARE.
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>
-    <f:entry field="sandboxName" title="Sandbox Name">
-        <f:textbox />
-    </f:entry>
     <f:entry field="stage" title="Stage">
         <f:textbox />
     </f:entry>

@@ -24,25 +24,20 @@ import java.util.concurrent.TimeoutException;
 public class CreateSandboxBuilder extends Builder {
 
     private final String blueprintName;
-    private final String sandboxName;
     private final String stage;
     private final String serviceNameForHealthCheck;
     private transient SandboxAPIService sandboxAPIService= null;
 
     @DataBoundConstructor
-    public CreateSandboxBuilder(String blueprintName, String sandboxName, String stage, String serviceNameForHealthCheck)
+    public CreateSandboxBuilder(String blueprintName, String stage, String serviceNameForHealthCheck)
     {
         this.blueprintName = blueprintName;
-        this.sandboxName = sandboxName;
         this.stage = stage;
         this.serviceNameForHealthCheck = serviceNameForHealthCheck;
     }
 
     public String getBlueprintName() {
         return blueprintName;
-    }
-    public String getSandboxName() {
-        return sandboxName;
     }
     public String getStage() {
         return stage;
@@ -73,7 +68,7 @@ public class CreateSandboxBuilder extends Builder {
         }
     }
     private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
-        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprintName(),getSandboxName(),getStage());
+        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprintName(),getStage());
         ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
         if(!res.isSuccessful()){
             throw new AbortException(res.getMessage());

@@ -33,7 +33,7 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getSandboxName(), getStage(), getServiceNameForHealthCheck());
+        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getStage(), getServiceNameForHealthCheck());
     }
 
     public static class Execution extends AbstractStepExecutionImpl {
@@ -41,15 +41,13 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
         private transient SandboxAPIService sandboxAPIService;
         private static final long serialVersionUID = 1;
         private final String blueprint;
-        private final String sandboxName;
         private final String stage;
         private String serviceNameForHealthCheck;
         private String sandboxId;
 
-        public Execution(@Nonnull StepContext context, String blueprint, String sandboxName, String stage, String serviceNameForHealthCheck) throws Exception {
+        public Execution(@Nonnull StepContext context, String blueprint, String stage, String serviceNameForHealthCheck) throws Exception {
             super(context);
             this.blueprint = blueprint;
-            this.sandboxName = sandboxName;
             this.stage = stage;
             this.serviceNameForHealthCheck = serviceNameForHealthCheck;
             sandboxAPIService = Config.CreateSandboxAPIService();
@@ -86,7 +84,7 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
 
 
         private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,sandboxName,stage);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
                 throw new AbortException(res.getMessage());

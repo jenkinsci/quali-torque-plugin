@@ -7,7 +7,6 @@ public abstract class AbstractCreateSandboxStepImpl extends Step
 {
     private final String blueprint;
     private String stage;
-    private String sandboxName;
     private String serviceNameForHealthCheck;
 
     public AbstractCreateSandboxStepImpl(String blueprint)
@@ -23,17 +22,8 @@ public abstract class AbstractCreateSandboxStepImpl extends Step
         return stage;
     }
 
-    public String getSandboxName() {
-        return sandboxName;
-    }
-
     public String getServiceNameForHealthCheck(){
         return serviceNameForHealthCheck;
-    }
-
-    @DataBoundSetter
-    public void setSandboxName(String sandboxName) {
-        this.sandboxName = sandboxName;
     }
 
     @DataBoundSetter

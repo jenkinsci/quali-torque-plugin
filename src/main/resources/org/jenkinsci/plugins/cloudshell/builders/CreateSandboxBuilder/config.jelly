@@ -18,9 +18,6 @@ limitations under the License.
     <f:entry title="${%Blueprint Name}" field="blueprintName">
         <f:textbox  />
     </f:entry>
-    <f:entry title="${%Sandbox Name}" field="sandboxName">
-        <f:textbox  />
-    </f:entry>
     <f:entry title="${%Stage}" field="stage">
         <f:textbox  />
     </f:entry>
