@@ -28,7 +28,7 @@
 ![Alt text](images/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
-The "createSandbox" and "deleteSandbox" steps provide an easy way to control the lifecycle of CloudShell
+The "startSandbox" and "stopSandbox" steps provide an easy way to control the lifecycle of CloudShell
 sandboxes. You can use these steps to create a sandbox, execute some test code on it, then delete it.
 
 ### Pipeline Scope Example:
