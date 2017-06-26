@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.cloudshell.steps;
 
 import com.google.common.collect.ImmutableSet;
 import hudson.AbortException;
-import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -22,10 +21,10 @@ import java.util.Set;
 /**
  * Created by shay-k on 20/06/2017.
  */
-public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
+public class StartSandboxStep extends AbstractStartSandboxStepImpl {
 
     @DataBoundConstructor
-    public CreateSandboxStep(@Nonnull String blueprint)
+    public StartSandboxStep(@Nonnull String blueprint)
     {
         super(blueprint);
     }
@@ -91,11 +90,11 @@ public class CreateSandboxStep extends AbstractCreateSandboxStepImpl{
         }
 
         @Override public String getFunctionName() {
-            return  PluginConstants.CREATE_SANDBOX_FUNC_NAME;
+            return  PluginConstants.START_SANDBOX_FUNC_NAME;
         }
 
         @Override public String getDisplayName() {
-            return Messages.CreateSandbox_FuncDisplayName();
+            return Messages.StartSandbox_FuncDisplayName();
         }
 
     }

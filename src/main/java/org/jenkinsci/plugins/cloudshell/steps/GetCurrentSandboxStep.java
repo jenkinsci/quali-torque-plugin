@@ -4,17 +4,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.Launcher;
 import hudson.model.Run;
-import hudson.model.TaskListener;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.cloudshell.PluginConstants;
 import org.jenkinsci.plugins.cloudshell.api.Sandbox;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -22,11 +17,8 @@ import java.util.Set;
  */
 public class GetCurrentSandboxStep extends Step {
 
-    private SandboxScopeStep sandboxScopeStep;
-
     @DataBoundConstructor
-    public GetCurrentSandboxStep(@Nonnull SandboxScopeStep sandboxScopeStep) {
-        this.sandboxScopeStep = sandboxScopeStep;
+    public GetCurrentSandboxStep() {
     }
 
     @Override

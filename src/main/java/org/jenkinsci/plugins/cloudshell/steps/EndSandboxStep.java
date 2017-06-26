@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Created by shay-k on 20/06/2017.
  */
-public class DeleteSandboxStep extends Step{
+public class EndSandboxStep extends Step{
     private final String sandboxId;
 
     public String getSandboxId() {
@@ -29,7 +29,7 @@ public class DeleteSandboxStep extends Step{
     }
 
     @DataBoundConstructor
-    public DeleteSandboxStep(@Nonnull String sandboxId)
+    public EndSandboxStep(@Nonnull String sandboxId)
     {
         this.sandboxId= sandboxId;
     }
@@ -64,11 +64,11 @@ public class DeleteSandboxStep extends Step{
         }
 
         @Override public String getFunctionName() {
-            return PluginConstants.DELETE_SANDBOX_FUNC_NAME;
+            return PluginConstants.END_SANDBOX_FUNC_NAME;
         }
 
         @Override public String getDisplayName() {
-            return Messages.DeleteSandbox_FuncDisplayName();
+            return Messages.EndSandbox_FuncDisplayName();
         }
 
     }

@@ -87,7 +87,7 @@ public class CreateSandboxBuilder extends Builder {
                 return sandbox;
             }
         }
-        throw new AbortException(String.format("sandbox with id '%s' not exists",sandboxId));
+        throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class CreateSandboxBuilder extends Builder {
 
         @Override
         public String getDisplayName() {
-            return Messages.CreateSandbox_FuncDisplayName();
+            return Messages.StartSandbox_FuncDisplayName();
         }
 
         @Override

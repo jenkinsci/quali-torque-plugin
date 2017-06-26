@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
-public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
+public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
 
     @DataBoundConstructor
     public SandboxScopeStep(@Nonnull String blueprint)
@@ -53,23 +53,12 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
             sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
-
+        Sandbox sandbox;
         @Override
         public boolean start() throws Exception {
-            Sandbox sandbox = createSandbox();
-            final EnvVars env = new EnvVars();
-            String sandboxJson = new Gson().toJson(sandbox).toString();
-            env.override(PluginConstants.SANDBOX_ENVVAR, sandboxJson);
-
-
-            EnvironmentExpander expander = new EnvironmentExpander() {
-                @Override
-                public void expand(@Nonnull EnvVars envVars) throws IOException, InterruptedException {
-                    envVars.overrideAll(env);
-                }
-            };
             getContext().newBodyInvoker().
-                    withContext(EnvironmentExpander.merge(getContext().get(EnvironmentExpander.class), expander)).
+                    withContext(createSandbox()).
+                    withContext(EnvironmentExpander.merge(getContext().get(EnvironmentExpander.class), createEnvironmentExpander())).
                     withCallback(new Callback(sandboxId, sandboxAPIService)).
                     start();
             return false;
@@ -78,19 +67,33 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
         @Override
         public void stop(@Nonnull Throwable throwable) throws Exception {
             if (sandboxId != null) {
-                deleteSandbox(sandboxId, sandboxAPIService,getContext());
+                endSandbox(sandboxId, sandboxAPIService,getContext());
             }
         }
 
+        private EnvironmentExpander createEnvironmentExpander()
+        {
+            final EnvVars env = new EnvVars();
 
-        private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
+            String sandboxJson = new Gson().toJson(sandbox).toString();
+            env.override(PluginConstants.SANDBOX_ENVVAR, sandboxJson);
+            EnvironmentExpander expander = new EnvironmentExpander() {
+                @Override
+                public void expand(@Nonnull EnvVars envVars) throws IOException, InterruptedException {
+                    envVars.overrideAll(env);
+                }
+            };
+            return expander;
+        }
+
+        private boolean createSandbox() throws IOException, TimeoutException, InterruptedException {
             CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
                 throw new AbortException(res.getMessage());
             }
 
-            sandboxId = res.getData().id;
+            String sandboxId = res.getData().id;
             if(this.serviceNameForHealthCheck != null)
                 sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
 
@@ -98,15 +101,16 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
             if(!sandboxesRes.isSuccessful()) {
                 throw new AbortException(res.getMessage());
             }
-            for(Sandbox sandbox :sandboxesRes.getData()){
-                if (sandbox.id == sandboxId){
-                    return sandbox;
+            for(Sandbox _sandbox :sandboxesRes.getData()){
+                if (_sandbox.id == sandboxId){
+                    sandbox = _sandbox;
+                    return true;
                 }
             }
             throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
-        private static void deleteSandbox(String sandboxId, SandboxAPIService sandboxAPIService, StepContext stepContext) throws Exception {
+        private static void endSandbox(String sandboxId, SandboxAPIService sandboxAPIService, StepContext stepContext) throws Exception {
             ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
@@ -123,7 +127,7 @@ public class SandboxScopeStep extends AbstractCreateSandboxStepImpl {
             }
             @Override
             protected void finished(StepContext stepContext) throws Exception {
-                deleteSandbox(sandboxId, sandboxAPIService, stepContext);
+                endSandbox(sandboxId, sandboxAPIService, stepContext);
             }
 
         }

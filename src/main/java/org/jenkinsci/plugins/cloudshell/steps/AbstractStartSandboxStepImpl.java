@@ -3,13 +3,13 @@ package org.jenkinsci.plugins.cloudshell.steps;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.kohsuke.stapler.DataBoundSetter;
 
-public abstract class AbstractCreateSandboxStepImpl extends Step
+public abstract class AbstractStartSandboxStepImpl extends Step
 {
     private final String blueprint;
     private String stage;
     private String serviceNameForHealthCheck;
 
-    public AbstractCreateSandboxStepImpl(String blueprint)
+    public AbstractStartSandboxStepImpl(String blueprint)
     {
         this.blueprint = blueprint;
     }

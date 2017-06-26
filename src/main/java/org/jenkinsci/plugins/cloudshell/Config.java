@@ -24,7 +24,7 @@ public class Config extends AbstractDescribableImpl<Config> {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static SandboxAPIService CreateSandboxAPIService() throws Exception {
-        return new SandboxAPIServiceMock();//SandboxAPIServiceImpl(DESCRIPTOR.getCloudShellConnection());
+        return new SandboxAPIServiceImpl(DESCRIPTOR.getCloudShellConnection());
     }
 
     public static final class DescriptorImpl extends Descriptor<Config> {
