@@ -53,7 +53,8 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
             sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
-        Sandbox sandbox;
+        private transient Sandbox sandbox;
+
         @Override
         public boolean start() throws Exception {
             getContext().newBodyInvoker().
@@ -86,14 +87,14 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
             return expander;
         }
 
-        private boolean createSandbox() throws IOException, TimeoutException, InterruptedException {
+        private boolean createSandbox() throws Exception {
             CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
                 throw new AbortException(res.getMessage());
             }
 
-            String sandboxId = res.getData().id;
+            sandboxId = res.getData().id;
             if(this.serviceNameForHealthCheck != null)
                 sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
 
@@ -107,6 +108,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
                     return true;
                 }
             }
+            endSandbox(sandboxId,sandboxAPIService,getContext());
             throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
