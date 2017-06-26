@@ -102,7 +102,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
                 throw new AbortException(res.getMessage());
             }
             for(Sandbox _sandbox :sandboxesRes.getData()){
-                if (_sandbox.id == sandboxId){
+                if (_sandbox.id.equals(sandboxId)){
                     sandbox = _sandbox;
                     return true;
                 }
