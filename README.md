@@ -10,9 +10,6 @@
 
 1) open port between Jenkins Slaves and the CloudShell Web Server (82 by default but configurable)
 
-Distributed architecture:
-
-![Alt text](images/Jenkinspluginarchitecture.jpg?raw=true)
 
 ## Installation
 1) Download the hpi package from the releases tab
@@ -28,7 +25,7 @@ Distributed architecture:
 
 2) Fill all fields under "cloudshell connection" section.
 
-![Alt text](Pics/global_settings.png?raw=true)
+![Alt text](images/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
 The "createSandbox" and "deleteSandbox" steps provide an easy way to control the lifecycle of CloudShell
