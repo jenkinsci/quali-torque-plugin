@@ -2,17 +2,14 @@
 
 ## Prerequisite
 
-1) cs2018 server must be running.
+1) CS18 server must be running.
 
 2) Jenkins server 2.3 and above.
 
 ##Architecture
 
-1) open port between Jenkins Slaves and the CloudShell Web Server (82 by default but configurable)
+1) open port between Jenkins Slaves and the CS18 API Server
 
-Distributed architecture:
-
-![Alt text](images/Jenkinspluginarchitecture.jpg?raw=true)
 
 ## Installation
 1) Download the hpi package from the releases tab
@@ -23,15 +20,15 @@ Distributed architecture:
 
 4) Restart jenkins
 
-## Configuring CloudShell in Jenkins
+## Configuring CS18 in Jenkins
 1) Navigate to the main Jenkins settings page
 
-2) Fill all fields under "cloudshell connection" section.
+2) Fill all fields under "CS18 connection" section.
 
 ![Alt text](Pics/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
-The "createSandbox" and "deleteSandbox" steps provide an easy way to control the lifecycle of CloudShell
+The "startSandbox" and "endandbox" steps provide an easy way to control the lifecycle of CS18
 sandboxes. You can use these steps to create a sandbox, execute some test code on it, then delete it.
 
 ### Pipeline Scope Example:

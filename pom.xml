@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
-  <artifactId>cloudshell</artifactId>
+  <artifactId>cs18</artifactId>
   <version>1.0.0</version>
   <packaging>hpi</packaging>
 
@@ -21,8 +21,8 @@
     <jenkins-test-harness.version>2.2</jenkins-test-harness.version>
   </properties>
 
-  <name>CloudShell Sandbox Plugin for Jenkins CI</name>
-  <description>CloudShell Sandbox Plugin for Jenkins CI</description>
+  <name>Jenkins CS18 plugin</name>
+  <description>Integrates Jenkins with CS18</description>
   <url>http://www.quali.com</url>
 
   <licenses>
