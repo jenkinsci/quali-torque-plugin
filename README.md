@@ -6,7 +6,7 @@
 
 2) Jenkins server 2.3 and above.
 
-##Architecture
+## Architecture
 
 1) open port between Jenkins Slaves and the CS18 API Server
 
@@ -31,11 +31,26 @@
 
 How to use 'cs18' DSL:
 
-1. Use cs18.blueprint to define a Blueprint object that can then be used to perform operations on a
 Blueprint:
-    * use 'Blueprint.startSandbox' to starts a sandbox and returns a sandbox object which you could stop later.
-    * use 'Blueprint.doInsideSandbox' to starts a sandbox for the duration of the body
+  * Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
+```
+blueprint = cs18.blueprint('blueprint_name','stage','servicehealthcheck')
+```
+  * Use **blueprint.startSandbox** to starts a sandbox and returns a sandbox object which you could stop later.
+```
+sandbox = blueprint.startSandbox()
+```
+  * Use **blueprint.doInsideSandbox** to starts a sandbox for the duration of the body
+```
+blueprint.doInsideSandbox{
+   //code block
+}
+```
+
 Sandbox:
-    * use 'Sandbox.end()' to stop the sandbox
+  * Use **sandbox.end()** to stop the sandbox
+```
+sandbox.end()
+```
 
 Enjoy
