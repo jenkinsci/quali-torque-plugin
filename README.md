@@ -25,15 +25,17 @@
 
 2) Fill all fields under "CS18 connection" section.
 
-![Alt text](Pics/global_settings.png?raw=true)
+![Alt text](images/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
-The "startSandbox" and "endandbox" steps provide an easy way to control the lifecycle of CS18
-sandboxes. You can use these steps to create a sandbox, execute some test code on it, then delete it.
 
-### Pipeline Scope Example:
-The "withSandbox" step provides an alternative syntax which makes it easy to execute some code in the context of a Sandbox.
-The code passed in the closure will be guaranteed to run after the sandbox is up and ready and the sandbox end will be taken care
-of automatically upon exiting the scope.
+How to use 'cs18' DSL:
+
+1. Use cs18.blueprint to define a Blueprint object that can then be used to perform operations on a
+Blueprint:
+    * use 'Blueprint.startSandbox' to starts a sandbox and returns a sandbox object which you could stop later.
+    * use 'Blueprint.doInsideSandbox' to starts a sandbox for the duration of the body
+Sandbox:
+    * use 'Sandbox.end()' to stop the sandbox
 
 Enjoy

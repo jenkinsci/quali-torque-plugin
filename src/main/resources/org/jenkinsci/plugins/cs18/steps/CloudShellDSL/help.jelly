@@ -17,7 +17,7 @@
                 Starts a sandbox from blueprint and returns a <code>Sandbox</code> which you could stop later.
             </p>
         </dd>
-        <dt><code>Blueprint.doInsideSandbox()</code></dt>
+        <dt><code>Blueprint.doInsideSandbox</code></dt>
         <dd>
             <p>
                 Starts a sandbox for the duration of the body
