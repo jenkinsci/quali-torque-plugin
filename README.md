@@ -31,7 +31,7 @@
 
 How to use 'cs18' DSL:
 
-1. Use cs18.blueprint to define a Blueprint object that can then be used to perform operations on a
+1. Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a
 Blueprint:
   * use 'Blueprint.startSandbox' to starts a sandbox and returns a sandbox object which you could stop later.
   * use 'Blueprint.doInsideSandbox' to starts a sandbox for the duration of the body
