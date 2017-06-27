@@ -67,7 +67,7 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
                 throw new AbortException(res.getMessage());
             }
             for(Sandbox sandbox :sandboxesRes.getData()){
-                if (sandbox.id == sandboxId){
+                if (sandbox.id.equals(sandboxId)){
 
                     return sandbox;
                 }
