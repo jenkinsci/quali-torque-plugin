@@ -5,10 +5,28 @@
         The <code>cs18</code> variable offers convenient access to CS18-related functions from a Pipeline script.
     </p>
     <dl>
-        <dt><code>sandbox()</code></dt>
+        <dt><code>blueprint(name,stage,serviceNameForHealthCheck)</code></dt>
         <dd>
             <p>
-                get <code>Sandbox</code> client.
+                Creates a blueprint object with a specified name.
+            </p>
+        </dd>
+        <dt><code>Blueprint.startSandbox()</code></dt>
+        <dd>
+            <p>
+                Starts a sandbox from blueprint and returns a <code>Sandbox</code> which you could stop later.
+            </p>
+        </dd>
+        <dt><code>Blueprint.doInsideSandbox()</code></dt>
+        <dd>
+            <p>
+                Starts a sandbox for the duration of the body
+            </p>
+        </dd>
+        <dt><code>Sandbox.end()</code></dt>
+        <dd>
+            <p>
+                End the sandbox
             </p>
         </dd>
     </dl>

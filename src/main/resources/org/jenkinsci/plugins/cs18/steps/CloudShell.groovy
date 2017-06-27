@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.cs18.steps
 
 import net.sf.json.JSONObject
+import org.jenkinsci.plugins.cs18.api.Sandbox
 
 class CloudShell implements Serializable {
 
@@ -10,9 +11,10 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Sandbox sandbox() {
-        new Sandbox(this)
+    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null){
+        return new Blueprint(this,blueprint,stage,serviceNameForHealthCheck)
     }
+
     private <V> V node(Closure<V> body) {
         if (script.env.NODE_NAME != null) {
             // Already inside a node block.
@@ -24,26 +26,29 @@ class CloudShell implements Serializable {
         }
     }
 
-    public static class Sandbox implements Serializable {
+    public static class Blueprint implements Serializable {
         public final CloudShell cs;
-        private Sandbox(CloudShell cs) {
+        private final String blueprint
+        private final String stage
+        private final String serviceNameForHealthCheck
+
+        private Blueprint(CloudShell cs, String blueprint, String stage = null, String serviceNameForHealthCheck = null) {
+            this.serviceNameForHealthCheck = serviceNameForHealthCheck
+            this.stage = stage
+            this.blueprint = blueprint
             this.cs = cs
         }
-        public org.jenkinsci.plugins.cs18.api.Sandbox start(String blueprint, String stage = null, String serviceNameForHealthCheck = null) {
+        public Sandbox startSandbox(){
             def sandbox
             cs.node {
                 sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage)
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("Sandbox:${sandboxJson}")
             }
-            return sandbox
+            return new Sandbox(this.cs,sandbox)
         }
 
-        public void end(String sandboxId){
-            cs.script.endSandbox sandboxId
-        }
-
-        public <V> V inside(String blueprint, String stage = null, String serviceNameForHealthCheck = null, Closure<V> body) {
+        public <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
                 def sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage)
                 def sandboxJson =JSONObject.fromObject(sandbox).toString()
@@ -57,6 +62,22 @@ class CloudShell implements Serializable {
                     cs.script.endSandbox sandbox['id']
                 }
             }
+        }
+    }
+
+    public static class Sandbox implements Serializable {
+        public final CloudShell cs;
+        private final org.jenkinsci.plugins.cs18.api.Sandbox sandbox;
+
+        private Sandbox(CloudShell cs, org.jenkinsci.plugins.cs18.api.Sandbox sandbox) {
+            this.sandbox = sandbox
+            this.cs = cs
+        }
+        public org.jenkinsci.plugins.cs18.api.Sandbox getData(){
+            return this.sandbox
+        }
+        public void end(){
+            cs.script.endSandbox this.sandbox.id
         }
     }
 
