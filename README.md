@@ -31,16 +31,16 @@
 
 How to use 'cs18' DSL:
 
-  * Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a
 Blueprint:
+  * Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
 ```
 blueprint = cs18.blueprint('blueprint_name','stage','servicehealthcheck')
 ```
-  * Use 'Blueprint.startSandbox' to starts a sandbox and returns a sandbox object which you could stop later.
+  * Use **blueprint.startSandbox** to starts a sandbox and returns a sandbox object which you could stop later.
 ```
 sandbox = blueprint.startSandbox()
 ```
-  * Use 'Blueprint.doInsideSandbox' to starts a sandbox for the duration of the body
+  * Use **blueprint.doInsideSandbox** to starts a sandbox for the duration of the body
 ```
 blueprint.doInsideSandbox{
    //code block
@@ -48,7 +48,7 @@ blueprint.doInsideSandbox{
 ```
 
 Sandbox:
-  * Use 'Sandbox.end()' to stop the sandbox
+  * Use **sandbox.end()** to stop the sandbox
 ```
 sandbox.end()
 ```
