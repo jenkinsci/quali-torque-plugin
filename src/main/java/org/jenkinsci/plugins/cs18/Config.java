@@ -6,6 +6,7 @@ import hudson.model.Descriptor;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIService;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIServiceImpl;
+import org.jenkinsci.plugins.cs18.service.SandboxAPIServiceMock;
 import org.jenkinsci.plugins.cs18.service.SandboxServiceConnection;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -23,6 +24,7 @@ public class Config extends AbstractDescribableImpl<Config> {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static SandboxAPIService CreateSandboxAPIService() throws Exception {
+        //return new SandboxAPIServiceMock();
         return new SandboxAPIServiceImpl(DESCRIPTOR.getAPIConnection());
     }
 

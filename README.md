@@ -33,7 +33,7 @@ sandboxes. You can use these steps to create a sandbox, execute some test code o
 
 ### Pipeline Scope Example:
 The "withSandbox" step provides an alternative syntax which makes it easy to execute some code in the context of a Sandbox.
-The code passed in the closure will be guaranteed to run after the sandbox is up and ready and the sandbox teardown will be taken care
+The code passed in the closure will be guaranteed to run after the sandbox is up and ready and the sandbox end will be taken care
 of automatically upon exiting the scope.
 
 Enjoy

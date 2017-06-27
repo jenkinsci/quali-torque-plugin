@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+    <p>
+        The <code>cs18</code> variable offers convenient access to CS18-related functions from a Pipeline script.
+    </p>
+    <dl>
+        <dt><code>sandbox()</code></dt>
+        <dd>
+            <p>
+                get <code>Sandbox</code> client.
+            </p>
+        </dd>
+    </dl>
+</j:jelly>

@@ -16,6 +16,9 @@ import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -48,6 +51,8 @@ public class EndSandboxStep extends Step{
 
         @Override
         protected Void run() throws Exception {
+            TaskListener taskListener = getContext().get(TaskListener.class);
+            taskListener.getLogger().println(String.format(Messages.EndSandbox_EndingMsg(sandboxId)));
             ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
             if(!res.isSuccessful())
                 throw new AbortException(res.getMessage());

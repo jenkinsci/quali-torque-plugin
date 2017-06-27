@@ -49,6 +49,8 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
 
         @Override
         protected Sandbox run() throws Exception {
+            TaskListener taskListener = getContext().get(TaskListener.class);
+            taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
             CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
             ResponseData<CreateSandboxResponse> res;
             if(this.serviceNameForHealthCheck != null)
@@ -66,6 +68,7 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
             }
             for(Sandbox sandbox :sandboxesRes.getData()){
                 if (sandbox.id == sandboxId){
+
                     return sandbox;
                 }
             }
