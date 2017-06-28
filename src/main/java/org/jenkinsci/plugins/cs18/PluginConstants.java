@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.cs18;
 
+import java.util.UUID;
+
 /**
  * Created by shay-k on 21/06/2017.
  */
@@ -11,5 +13,5 @@ public class PluginConstants {
     public static final String WITH_SANDBOX_FUNC_NAME="withSandbox";
 
     public static final String SANDBOX_ENVVAR = "SANDBOX";
-
 }
+

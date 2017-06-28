@@ -7,6 +7,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
+import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.SandboxStepExecution;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
@@ -51,20 +52,20 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
         protected Sandbox run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName());
             ResponseData<CreateSandboxResponse> res;
             if(this.serviceNameForHealthCheck != null)
                 res = sandboxAPIService.createSandbox(req,this.serviceNameForHealthCheck, 10);
             else
                 res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful())
-                throw new AbortException(res.getMessage());
+                throw new AbortException(res.getError());
 
 
             String sandboxId = res.getData().id;
             ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
             if(!sandboxesRes.isSuccessful()) {
-                throw new AbortException(res.getMessage());
+                throw new AbortException(res.getError());
             }
             for(Sandbox sandbox :sandboxesRes.getData()){
                 if (sandbox.id.equals(sandboxId)){

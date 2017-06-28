@@ -8,6 +8,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
+import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cs18.api.ResponseData;
@@ -17,6 +18,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 public class CreateSandboxBuilder extends Builder {
@@ -75,10 +77,10 @@ public class CreateSandboxBuilder extends Builder {
         }
     }
     private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
-        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),getStage());
+        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),getStage(),PluginHelpers.GenerateSandboxName());
         ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
         if(!res.isSuccessful()){
-            throw new AbortException(res.getMessage());
+            throw new AbortException(res.getError());
         }
 
         String sandboxId = res.getData().id;
@@ -87,7 +89,7 @@ public class CreateSandboxBuilder extends Builder {
 
         ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
         if(!sandboxesRes.isSuccessful()) {
-            throw new AbortException(res.getMessage());
+            throw new AbortException(res.getError());
         }
         for(Sandbox sandbox :sandboxesRes.getData()){
             if (sandbox.id.equals(sandboxId)){

@@ -10,6 +10,7 @@ import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Config;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
+import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cs18.api.ResponseData;
@@ -87,10 +88,10 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         }
 
         private boolean createSandbox() throws Exception {
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName());
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
-                throw new AbortException(res.getMessage());
+                throw new AbortException(res.getError());
             }
 
             sandboxId = res.getData().id;
@@ -99,7 +100,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
 
             ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
             if(!sandboxesRes.isSuccessful()) {
-                throw new AbortException(res.getMessage());
+                throw new AbortException(res.getError());
             }
             for(Sandbox _sandbox :sandboxesRes.getData()){
                 if (_sandbox.id.equals(sandboxId)){
