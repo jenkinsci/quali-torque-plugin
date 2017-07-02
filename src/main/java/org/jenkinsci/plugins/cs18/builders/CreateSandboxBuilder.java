@@ -77,7 +77,7 @@ public class CreateSandboxBuilder extends Builder {
         }
     }
     private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
-        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),getStage(),PluginHelpers.GenerateSandboxName());
+        CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),getStage(),PluginHelpers.GenerateSandboxName(), null, null);
         ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
         if(!res.isSuccessful()){
             throw new AbortException(res.getError());
