@@ -11,8 +11,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null){
-        return new Blueprint(this,blueprint,stage,serviceNameForHealthCheck)
+    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null, String branch, String changeset){
+        return new Blueprint(this,blueprint,stage,serviceNameForHealthCheck, branch, changeset)
     }
 
     private <V> V node(Closure<V> body) {
@@ -32,16 +32,19 @@ class CloudShell implements Serializable {
         private final String stage
         private final String serviceNameForHealthCheck
 
-        private Blueprint(CloudShell cs, String blueprint, String stage = null, String serviceNameForHealthCheck = null) {
+        private Blueprint(CloudShell cs, String blueprint, String stage = null, String serviceNameForHealthCheck = null,String branch = null,String changeset = null) {
             this.serviceNameForHealthCheck = serviceNameForHealthCheck
             this.stage = stage
             this.blueprint = blueprint
             this.cs = cs
+            this.branch = branch
+            this.changeset = changeset
         }
+
         public Sandbox startSandbox(){
             def sandbox
             cs.node {
-                sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage)
+                sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage, branch:branch, changeset:changeset)
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("Sandbox:${sandboxJson}")
             }
@@ -50,7 +53,7 @@ class CloudShell implements Serializable {
 
         public <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
-                def sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage)
+                def sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage,branch:branch, changeset:changeset)
                 def sandboxJson =JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("Sandbox:${sandboxJson}")
                 try {

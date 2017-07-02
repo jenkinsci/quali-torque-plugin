@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-  This plugin allow using CloudShell Sandbox API
+  This plugin allow using CS18 API Server
 </div>

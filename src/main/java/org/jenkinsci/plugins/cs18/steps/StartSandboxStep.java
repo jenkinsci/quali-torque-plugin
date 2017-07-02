@@ -32,19 +32,23 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getBlueprint(), getStage(), getServiceNameForHealthCheck());
+        return new Execution(stepContext, getBlueprint(), getStage(), getServiceNameForHealthCheck(), getBranch(), getChangeset());
     }
 
     public static class Execution extends SandboxStepExecution<Sandbox> {
         private final String blueprint;
         private final String stage;
         private String serviceNameForHealthCheck;
+        private String branch;
+        private String changeset;
 
-        protected Execution(@Nonnull StepContext context, String blueprint, String stage, String serviceNameForHealthCheck) throws Exception {
+        protected Execution(@Nonnull StepContext context, String blueprint, String stage, String serviceNameForHealthCheck, String branch, String changeset) throws Exception {
             super(context);
             this.blueprint = blueprint;
             this.stage = stage;
             this.serviceNameForHealthCheck = serviceNameForHealthCheck;
+            this.branch = branch;
+            this.changeset = changeset;
         }
 
 
@@ -52,7 +56,7 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
         protected Sandbox run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName());
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(),branch,changeset);
             ResponseData<CreateSandboxResponse> res;
             if(this.serviceNameForHealthCheck != null)
                 res = sandboxAPIService.createSandbox(req,this.serviceNameForHealthCheck, 10);
