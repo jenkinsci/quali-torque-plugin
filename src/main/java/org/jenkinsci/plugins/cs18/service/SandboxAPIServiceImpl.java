@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -144,6 +145,9 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
                 if (responseCode == 200) {
                     check_addresses.remove(address);
                 }
+            }
+            catch (UnknownHostException ignored)
+            {
             }
             catch (ConnectException ignored)
             {

@@ -34,4 +34,10 @@ THE SOFTWARE.
     <f:entry field="serviceNameForHealthCheck" title="Service Name(HealthCheck)">
         <f:textbox />
     </f:entry>
+    <f:entry field="branch" title="Branch">
+        <f:textbox />
+    </f:entry>
+    <f:entry field="changeset" title="ChangeSet">
+        <f:textbox />
+    </f:entry>
 </j:jelly>

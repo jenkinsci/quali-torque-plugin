@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.cs18.steps
 
 import net.sf.json.JSONObject
-import org.jenkinsci.plugins.cs18.api.Sandbox
 
 class CloudShell implements Serializable {
 
@@ -11,7 +10,7 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null, String branch, String changeset){
+    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null, String branch = null, String changeset = null){
         return new Blueprint(this,blueprint,stage,serviceNameForHealthCheck, branch, changeset)
     }
 
@@ -31,6 +30,8 @@ class CloudShell implements Serializable {
         private final String blueprint
         private final String stage
         private final String serviceNameForHealthCheck
+        private final String branch;
+        private final String changeset;
 
         private Blueprint(CloudShell cs, String blueprint, String stage = null, String serviceNameForHealthCheck = null,String branch = null,String changeset = null) {
             this.serviceNameForHealthCheck = serviceNameForHealthCheck
