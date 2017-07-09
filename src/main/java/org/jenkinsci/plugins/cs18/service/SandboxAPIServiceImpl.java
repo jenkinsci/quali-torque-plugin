@@ -12,10 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -151,6 +148,9 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
             }
             catch (ConnectException ignored)
             {
+            }
+            catch (SocketException ignored){
+
             }
         }
         return check_addresses.isEmpty();
