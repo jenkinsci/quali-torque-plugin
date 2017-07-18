@@ -84,8 +84,8 @@ public class CreateSandboxBuilder extends Builder {
         }
 
         String sandboxId = res.getData().id;
-        if(getServiceNameForHealthCheck() != null)
-            sandboxAPIService.waitForService(sandboxId, getServiceNameForHealthCheck(),10);
+//        if(getServiceNameForHealthCheck() != null)
+//            sandboxAPIService.waitForService(sandboxId, getServiceNameForHealthCheck(),10);
 
         ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
         if(!sandboxesRes.isSuccessful()) {

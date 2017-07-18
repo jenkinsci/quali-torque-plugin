@@ -25,16 +25,10 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry field="blueprint" title="Blueprint">
+    <f:entry field="sandboxId" title="Sandbox Id">
         <f:textbox />
     </f:entry>
-    <f:entry field="stage" title="Stage">
-        <f:textbox />
-    </f:entry>
-    <f:entry field="branch" title="Branch">
-        <f:textbox />
-    </f:entry>
-    <f:entry field="changeset" title="ChangeSet">
+    <f:entry field="serviceNameForHealthCheck" title="Service Name(HealthCheck)">
         <f:textbox />
     </f:entry>
 </j:jelly>

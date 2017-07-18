@@ -11,4 +11,6 @@ public class Service implements Serializable
     public String name;
     @JsonProperty("addresses")
     public List<String> addresses;
+    @JsonProperty("status")
+    public String status;
 }

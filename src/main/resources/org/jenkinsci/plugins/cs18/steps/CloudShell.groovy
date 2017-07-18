@@ -45,18 +45,24 @@ class CloudShell implements Serializable {
         public Sandbox startSandbox(){
             def sandbox
             cs.node {
-                sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage, branch:branch, changeset:changeset)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage, branch:branch, changeset:changeset)
+                cs.script.echo("health check - waiting for sandbox to become ready for testing...")
+                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId,serviceNameForHealthCheck:serviceNameForHealthCheck)
+                cs.script.echo("health check done!")
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
-                cs.script.echo("Sandbox:${sandboxJson}")
+                cs.script.echo("sandbox under test details:${sandboxJson}")
             }
             return new Sandbox(this.cs,sandbox)
         }
 
         public <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
-                def sandbox = cs.script.startSandbox(blueprint: blueprint, serviceNameForHealthCheck: serviceNameForHealthCheck, stage: stage,branch:branch, changeset:changeset)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage,branch:branch, changeset:changeset)
+                cs.script.echo("health check - waiting for sandbox to become ready for testing...")
+                def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId,serviceNameForHealthCheck:serviceNameForHealthCheck)
+                cs.script.echo("health check done!")
                 def sandboxJson =JSONObject.fromObject(sandbox).toString()
-                cs.script.echo("Sandbox:${sandboxJson}")
+                cs.script.echo("sandbox under test details:${sandboxJson}")
                 try {
                     cs.script.withEnv(["SANDBOX=${sandboxJson}"]) {
                         body()

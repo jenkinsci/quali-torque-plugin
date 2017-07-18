@@ -33,7 +33,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getStage(), getServiceNameForHealthCheck());
+        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getStage());
     }
 
     public static class Execution extends AbstractStepExecutionImpl {
@@ -42,14 +42,12 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         private static final long serialVersionUID = 1;
         private final String blueprint;
         private final String stage;
-        private String serviceNameForHealthCheck;
         private String sandboxId;
 
-        public Execution(@Nonnull StepContext context, String blueprint, String stage, String serviceNameForHealthCheck) throws Exception {
+        public Execution(@Nonnull StepContext context, String blueprint, String stage) throws Exception {
             super(context);
             this.blueprint = blueprint;
             this.stage = stage;
-            this.serviceNameForHealthCheck = serviceNameForHealthCheck;
             sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
@@ -95,8 +93,8 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
             }
 
             sandboxId = res.getData().id;
-            if(this.serviceNameForHealthCheck != null)
-                sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
+//            if(this.serviceNameForHealthCheck != null)
+//                sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
 
             ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
             if(!sandboxesRes.isSuccessful()) {

@@ -12,6 +12,8 @@ public class PluginConstants {
 
     public static final String WITH_SANDBOX_FUNC_NAME="withSandbox";
 
+    public static final String WAIT_FOR_SANDBOX_FUNC_NAME ="waitForSandbox";
+
     public static final String SANDBOX_ENVVAR = "SANDBOX";
 }
 

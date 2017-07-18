@@ -31,7 +31,4 @@ THE SOFTWARE.
     <f:entry field="stage" title="Stage">
         <f:textbox />
     </f:entry>
-    <f:entry field="serviceNameForHealthCheck" title="Service Name(HealthCheck)">
-        <f:textbox />
-    </f:entry>
 </j:jelly>
