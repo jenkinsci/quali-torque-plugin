@@ -69,7 +69,7 @@ class CloudShell implements Serializable {
                     }
                 }
                 finally {
-                    cs.script.endSandbox sandbox['id']
+                    cs.script.endSandbox sandboxId
                 }
             }
         }
