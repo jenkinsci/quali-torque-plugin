@@ -1,5 +1,5 @@
 target
 work
-debug.bat
-cloudshell.iml
+debug.sh
 .idea
+cs18.iml
