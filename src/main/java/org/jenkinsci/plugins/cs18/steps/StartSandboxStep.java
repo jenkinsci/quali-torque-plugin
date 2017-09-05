@@ -53,7 +53,7 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
         protected String run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(),branch,changeset);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(),branch,changeset,true);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
