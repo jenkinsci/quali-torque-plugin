@@ -86,7 +86,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         }
 
         private boolean createSandbox() throws Exception {
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(), null, null);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(), null, null,true);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
                 throw new AbortException(res.getError());
