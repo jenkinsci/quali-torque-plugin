@@ -9,14 +9,16 @@ import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
 import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.SandboxStepExecution;
-import org.jenkinsci.plugins.cs18.api.*;
-import org.jenkinsci.plugins.workflow.steps.*;
+import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
+import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
+import org.jenkinsci.plugins.cs18.api.ResponseData;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by shay-k on 20/06/2017.
@@ -53,7 +55,7 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
         protected String run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(),branch,changeset,true);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint, stage, PluginHelpers.GenerateSandboxName(), branch, changeset,true);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
