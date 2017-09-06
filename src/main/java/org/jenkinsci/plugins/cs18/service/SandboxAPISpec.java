@@ -10,12 +10,12 @@ import retrofit2.http.*;
  * Created by shay-k on 21/06/2017.
  */
 public interface SandboxAPISpec {
-    @GET("api/Sandbox")
+    @GET("api/Sandboxes")
     Call<Sandbox[]> getSandboxes();
 
-    @POST("api/Sandbox")
+    @POST("api/Sandboxes")
     Call<CreateSandboxResponse> createSandbox(@Body CreateSandboxRequest request);
 
-    @DELETE("api/Sandbox")
+    @DELETE("api/Sandboxes")
     Call<Void> deleteSandbox(@Query("sandboxId") String sandboxId);
 }
