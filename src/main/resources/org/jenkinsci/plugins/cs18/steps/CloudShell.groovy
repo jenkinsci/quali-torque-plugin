@@ -10,8 +10,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, String stage = null, String serviceNameForHealthCheck = null, String branch = null, String changeset = null){
-        return new Blueprint(this,blueprint,stage,serviceNameForHealthCheck, branch, changeset)
+    public Blueprint blueprint(String blueprint, String stage = null, String branch = null, String changeset = null){
+        return new Blueprint(this,blueprint,stage, branch, changeset)
     }
 
     private <V> V node(Closure<V> body) {
@@ -29,12 +29,10 @@ class CloudShell implements Serializable {
         public final CloudShell cs;
         private final String blueprint
         private final String stage
-        private final String serviceNameForHealthCheck
         private final String branch;
         private final String changeset;
 
-        private Blueprint(CloudShell cs, String blueprint, String stage = null, String serviceNameForHealthCheck = null,String branch = null,String changeset = null) {
-            this.serviceNameForHealthCheck = serviceNameForHealthCheck
+        private Blueprint(CloudShell cs, String blueprint, String stage = null, String branch = null,String changeset = null) {
             this.stage = stage
             this.blueprint = blueprint
             this.cs = cs
@@ -47,7 +45,7 @@ class CloudShell implements Serializable {
             cs.node {
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage, branch:branch, changeset:changeset)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId,serviceNameForHealthCheck:serviceNameForHealthCheck)
+                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
                 cs.script.echo("health check done!")
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("sandbox under test details:${sandboxJson}")
@@ -60,7 +58,7 @@ class CloudShell implements Serializable {
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage,branch:branch, changeset:changeset)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId,serviceNameForHealthCheck:serviceNameForHealthCheck)
+                    def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
                     cs.script.echo("health check done!")
                     def sandboxJson =JSONObject.fromObject(sandbox).toString()
                     cs.script.echo("sandbox under test details:${sandboxJson}")

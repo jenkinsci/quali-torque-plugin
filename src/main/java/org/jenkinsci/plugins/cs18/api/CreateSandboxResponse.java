@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.cs18.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 public class CreateSandboxResponse
 {
-    @JsonProperty("id")
+    @SerializedName("id")
     public String id;
-    @JsonProperty("name")
+    @SerializedName("name")
     public String name;
 }
 

@@ -26,14 +26,12 @@ import java.util.concurrent.TimeoutException;
  */
 public class WaitForSandboxStep extends Step {
 
-    private String serviceNameForHealthCheck;
     private String sandboxId;
 
     @DataBoundConstructor
-    public WaitForSandboxStep(@Nonnull String sandboxId, String serviceNameForHealthCheck)
+    public WaitForSandboxStep(@Nonnull String sandboxId)
     {
         this.sandboxId = sandboxId;
-        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
     }
 
     @DataBoundSetter
@@ -45,38 +43,27 @@ public class WaitForSandboxStep extends Step {
         return this.sandboxId;
     }
 
-    @DataBoundSetter
-    public void setServiceNameForHealthCheck(String serviceNameForHealthCheck) {
-        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
-    }
-
-    public String getServiceNameForHealthCheck() {
-        return this.serviceNameForHealthCheck;
-    }
-
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getSandboxId(), getServiceNameForHealthCheck());
+        return new Execution(stepContext, getSandboxId());
     }
 
     public static class Execution extends SandboxStepExecution<Sandbox> {
         private final String sandboxId;
-        private final String serviceNameForHealthCheck;
 
-        protected Execution(@Nonnull StepContext context, String sandboxId, String serviceNameForHealthCheck) throws Exception {
+        protected Execution(@Nonnull StepContext context, String sandboxId) throws Exception {
             super(context);
             this.sandboxId = sandboxId;
-            this.serviceNameForHealthCheck = serviceNameForHealthCheck;
         }
 
 
         @Override
         protected Sandbox run() throws Exception {
-            return waitForSandbox(sandboxId,this.serviceNameForHealthCheck,8);
+            return waitForSandbox(sandboxId, 8);
         }
 
-        public Sandbox waitForSandbox(String sandboxId, String serviceNameForHealthCheck,double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
+        public Sandbox waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
@@ -84,12 +71,8 @@ public class WaitForSandboxStep extends Step {
                 Sandbox sandbox = getSandbox(sandboxId);
                 if(sandbox != null)
                 {
-                    Service service = getService(sandbox, serviceNameForHealthCheck);
-                    if(service != null)
-                    {
-                        if(waitForSandbox(service))
-                            return sandbox;
-                    }
+                    if(waitForSandbox(sandbox))
+                        return sandbox;
                 }
                 Thread.sleep(2000);
             }
@@ -110,23 +93,32 @@ public class WaitForSandboxStep extends Step {
             throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
-        private boolean waitForSandbox(Service service) throws IOException {
-            if(service.status == null || service.status.equals("") ||service.status.equals(ServiceStatus.PENDING))
+        private boolean waitForSandbox(Sandbox sandbox) throws IOException {
+            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.PREPARING) ||
+                    sandbox.deploymentStatus.equals(SandboxDeploymentStatus.DEPLOYING))
                 return false;
-            if(service.status.equals(ServiceStatus.COMPLETED))
+            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.DONE))
                 return true;
-            if(service.status.equals(ServiceStatus.ERROR))
-                throw new AbortException(Messages.ServiceStateError(service.name));
-
-            throw new AbortException(Messages.UnknownServiceStatusError(service.name,service.status));
-        }
-        private Service getService(Sandbox sandbox, String serviceName) {
-            for(Service service:sandbox.services)
-            {
-                if(service.name.equals(serviceName))
-                    return service;
+            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.ERROR) ||
+                    sandbox.deploymentStatus.equals(SandboxDeploymentStatus.ABORTED)) {
+                String app_statuses_str = formatAppsDeploymentStatuses(sandbox);
+                throw new AbortException(Messages.SandboxDeploymentFailedError(sandbox.deploymentStatus, app_statuses_str));
             }
-            return null;
+
+            throw new AbortException(Messages.UnknownSandboxDeploymentStatusError(sandbox.id, sandbox.deploymentStatus));
+        }
+
+        private String formatAppsDeploymentStatuses(Sandbox sandbox)throws IOException{
+            StringBuilder builder = new StringBuilder();
+            boolean isFirst = true;
+            for (Service service:sandbox.services){
+                if (isFirst)
+                    isFirst= false;
+                else
+                    builder.append(", ");
+                builder.append(String.format("%s: %s", service.name, service.deploymentStatus));
+            }
+            return builder.toString();
         }
     }
 

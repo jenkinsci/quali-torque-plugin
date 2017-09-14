@@ -24,6 +24,7 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(connection.connectionTimeoutSec,TimeUnit.SECONDS);
+        builder.readTimeout(connection.readTimeoutSec, TimeUnit.SECONDS);
         OkHttpClient client= builder.build();
 
         String baseUrl = String.format("http://%1$s:%2$s",connection.address,connection.port);

@@ -39,7 +39,7 @@ public class Config extends AbstractDescribableImpl<Config> {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException
         {
-            apiConnection = new SandboxServiceConnection(json.getString("address"),json.getInt("port"), 10);
+            apiConnection = new SandboxServiceConnection(json.getString("address"),json.getInt("port"), 10, 30);
             save();
             return super.configure(req,json);
         }
