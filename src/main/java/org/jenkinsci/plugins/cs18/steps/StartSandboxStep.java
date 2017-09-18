@@ -1,24 +1,19 @@
 package org.jenkinsci.plugins.cs18.steps;
 
-import com.google.common.collect.ImmutableSet;
 import hudson.AbortException;
-import hudson.Extension;
-import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Messages;
-import org.jenkinsci.plugins.cs18.PluginConstants;
 import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.SandboxStepExecution;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cs18.api.ResponseData;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Created by shay-k on 20/06/2017.
@@ -26,60 +21,39 @@ import java.util.Set;
 public class StartSandboxStep extends AbstractStartSandboxStepImpl {
 
     @DataBoundConstructor
-    public StartSandboxStep(@Nonnull String blueprint)
+    public StartSandboxStep(@Nonnull String blueprint, @Nonnull Map<String, String> release)
     {
-        super(blueprint);
+        super(blueprint, release);
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getBlueprint(), getStage(), getBranch(), getChangeset());
+        return new Execution(stepContext, getBlueprint(), getRelease());
     }
 
     public static class Execution extends SandboxStepExecution<String> {
         private final String blueprint;
-        private final String stage;
-        private final String branch;
-        private final String changeset;
+        private final Map<String, String> release;
 
-        protected Execution(@Nonnull StepContext context, String blueprint, String stage, String branch, String changeset) throws Exception {
+        protected Execution(@Nonnull StepContext context, String blueprint, Map<String, String> release) throws Exception {
             super(context);
             this.blueprint = blueprint;
-            this.stage = stage;
-            this.branch = branch;
-            this.changeset = changeset;
+            this.release = release;
         }
 
 
         @Override
         protected String run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
+            assert taskListener != null;
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint, stage, PluginHelpers.GenerateSandboxName(), branch, changeset,true);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint, PluginHelpers.GenerateSandboxName(), release,true);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
 
-            String sandboxId = res.getData().id;
-            return sandboxId;
+            return res.getData().id;
         }
     }
 
-    @Extension
-    public static class Descriptor extends StepDescriptor {
-
-        @Override
-        public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class);
-        }
-
-        @Override public String getFunctionName() {
-            return  PluginConstants.START_SANDBOX_FUNC_NAME;
-        }
-
-        @Override public String getDisplayName() {
-            return Messages.StartSandbox_FuncDisplayName();
-        }
-
-    }
 }

@@ -1,12 +1,8 @@
 package org.jenkinsci.plugins.cs18.steps;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import hudson.AbortException;
 import hudson.EnvVars;
-import hudson.Extension;
-import hudson.model.Run;
-import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Config;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
@@ -21,19 +17,19 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Map;
 
 public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
 
     @DataBoundConstructor
-    public SandboxScopeStep(@Nonnull String blueprint)
+    public SandboxScopeStep(@Nonnull String blueprint, @Nonnull Map<String, String> release)
     {
-        super(blueprint);
+        super(blueprint, release);
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getStage());
+        return new SandboxScopeStep.Execution(stepContext, getBlueprint(), getRelease());
     }
 
     public static class Execution extends AbstractStepExecutionImpl {
@@ -41,13 +37,13 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         private transient SandboxAPIService sandboxAPIService;
         private static final long serialVersionUID = 1;
         private final String blueprint;
-        private final String stage;
+        private final Map<String, String> release;
         private String sandboxId;
 
-        public Execution(@Nonnull StepContext context, String blueprint, String stage) throws Exception {
+        public Execution(@Nonnull StepContext context, String blueprint, Map<String, String> release) throws Exception {
             super(context);
             this.blueprint = blueprint;
-            this.stage = stage;
+            this.release = release;
             sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
@@ -74,7 +70,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         {
             final EnvVars env = new EnvVars();
 
-            String sandboxJson = new Gson().toJson(sandbox).toString();
+            String sandboxJson = new Gson().toJson(sandbox);
             env.override(PluginConstants.SANDBOX_ENVVAR, sandboxJson);
             EnvironmentExpander expander = new EnvironmentExpander() {
                 @Override
@@ -86,16 +82,13 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
         }
 
         private boolean createSandbox() throws Exception {
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint,stage, PluginHelpers.GenerateSandboxName(), null, null,true);
+            CreateSandboxRequest req = new CreateSandboxRequest(blueprint, PluginHelpers.GenerateSandboxName(), release,true);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
             if(!res.isSuccessful()){
                 throw new AbortException(res.getError());
             }
 
             sandboxId = res.getData().id;
-//            if(this.serviceNameForHealthCheck != null)
-//                sandboxAPIService.waitForService(sandboxId, this.serviceNameForHealthCheck,10);
-
             ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
             if(!sandboxesRes.isSuccessful()) {
                 throw new AbortException(res.getError());
@@ -130,30 +123,6 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
                 endSandbox(sandboxId, sandboxAPIService, stepContext);
             }
 
-        }
-
-    }
-    //@Extension
-    public static class Descriptor extends StepDescriptor {
-
-        @Override
-        public Set<? extends Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class);
-        }
-
-        @Override
-        public String getFunctionName() {
-            return PluginConstants.WITH_SANDBOX_FUNC_NAME;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return Messages.WithSandbox_FuncDisplayName();
-        }
-
-        @Override
-        public boolean takesImplicitBlockArgument() {
-            return true;
         }
 
     }

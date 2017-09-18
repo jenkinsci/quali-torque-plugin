@@ -3,7 +3,10 @@ package org.jenkinsci.plugins.cs18.builders;
 import com.google.gson.Gson;
 import hudson.AbortException;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import org.jenkinsci.plugins.cs18.Messages;
@@ -15,44 +18,31 @@ import org.jenkinsci.plugins.cs18.api.ResponseData;
 import org.jenkinsci.plugins.cs18.api.Sandbox;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIService;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class CreateSandboxBuilder extends Builder {
 
     private final String blueprint;
-    private String stage;
-    private String serviceNameForHealthCheck;
+    private final Map<String, String> release;
     private transient SandboxAPIService sandboxAPIService= null;
 
     @DataBoundConstructor
-    public CreateSandboxBuilder(String blueprint)
+    public CreateSandboxBuilder(String blueprint, Map<String, String> release)
     {
         this.blueprint = blueprint;
+        this.release = release;
     }
 
-
-    @DataBoundSetter
-    public void setStage(String stage) {
-        this.stage = stage;
-    }
-
-    @DataBoundSetter
-    public void setServiceNameForHealthCheck(String serviceNameForHealthCheck) {
-        this.serviceNameForHealthCheck = serviceNameForHealthCheck;
-    }
 
     public String getBlueprint() {
-        return blueprint;
+        return this.blueprint;
     }
-    public String getStage() {
-        return stage;
-    }
-    public String getServiceNameForHealthCheck() {
-        return serviceNameForHealthCheck;
+
+    public Map<String, String> getRelease() {
+        return this.release;
     }
 
     @Override
@@ -67,7 +57,7 @@ public class CreateSandboxBuilder extends Builder {
             }
             createSandboxAction.addSandboxId(sandbox.id);
 
-            String sandboxJson = new Gson().toJson(sandbox).toString();
+            String sandboxJson = new Gson().toJson(sandbox);
             build.addAction(new VariableInjectionAction(PluginConstants.SANDBOX_ENVVAR,sandboxJson));
             return true;
         } catch (Exception e) {
@@ -78,10 +68,8 @@ public class CreateSandboxBuilder extends Builder {
     }
     private Sandbox createSandbox() throws IOException, TimeoutException, InterruptedException {
         CreateSandboxRequest req = new CreateSandboxRequest(getBlueprint(),
-                getStage(),
                 PluginHelpers.GenerateSandboxName(),
-                null,
-                null,
+                getRelease(),
                 true);
 
         ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
@@ -90,9 +78,6 @@ public class CreateSandboxBuilder extends Builder {
         }
 
         String sandboxId = res.getData().id;
-//        if(getServiceNameForHealthCheck() != null)
-//            sandboxAPIService.waitForService(sandboxId, getServiceNameForHealthCheck(),10);
-
         ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
         if(!sandboxesRes.isSuccessful()) {
             throw new AbortException(res.getError());

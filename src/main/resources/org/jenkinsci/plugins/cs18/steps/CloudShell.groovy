@@ -1,17 +1,18 @@
 package org.jenkinsci.plugins.cs18.steps
 
 import net.sf.json.JSONObject
+import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class CloudShell implements Serializable {
 
-    private org.jenkinsci.plugins.workflow.cps.CpsScript script
+    private CpsScript script
 
-    public CloudShell(org.jenkinsci.plugins.workflow.cps.CpsScript script) {
+    public CloudShell(CpsScript script) {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, String stage = null, String branch = null, String changeset = null){
-        return new Blueprint(this,blueprint,stage, branch, changeset)
+    public Blueprint blueprint(String blueprint, Map<String, String> release){
+        return new Blueprint(this, blueprint, release)
     }
 
     private <V> V node(Closure<V> body) {
@@ -26,24 +27,20 @@ class CloudShell implements Serializable {
     }
 
     public static class Blueprint implements Serializable {
-        public final CloudShell cs;
+        public final CloudShell cs
         private final String blueprint
-        private final String stage
-        private final String branch;
-        private final String changeset;
+        private final Map<String, String> release
 
-        private Blueprint(CloudShell cs, String blueprint, String stage = null, String branch = null,String changeset = null) {
-            this.stage = stage
+        private Blueprint(CloudShell cs, String blueprint, Map<String, String> release) {
             this.blueprint = blueprint
             this.cs = cs
-            this.branch = branch
-            this.changeset = changeset
+            this.release = release
         }
 
         public Sandbox startSandbox(){
             def sandbox
             cs.node {
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage, branch:branch, changeset:changeset)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                 sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
                 cs.script.echo("health check done!")
@@ -55,7 +52,7 @@ class CloudShell implements Serializable {
 
         public <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, stage: stage,branch:branch, changeset:changeset)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                     def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
@@ -74,7 +71,7 @@ class CloudShell implements Serializable {
     }
 
     public static class Sandbox implements Serializable {
-        public final CloudShell cs;
+        public final CloudShell cs
         private final org.jenkinsci.plugins.cs18.api.Sandbox sandbox;
 
         private Sandbox(CloudShell cs, org.jenkinsci.plugins.cs18.api.Sandbox sandbox) {

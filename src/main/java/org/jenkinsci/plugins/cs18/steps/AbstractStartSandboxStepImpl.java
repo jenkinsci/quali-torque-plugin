@@ -1,48 +1,25 @@
 package org.jenkinsci.plugins.cs18.steps;
 
 import org.jenkinsci.plugins.workflow.steps.Step;
-import org.kohsuke.stapler.DataBoundSetter;
+
+import java.util.Map;
 
 public abstract class AbstractStartSandboxStepImpl extends Step
 {
     private final String blueprint;
-    private String stage;
-    private String branch;
-    private String changeset;
+    private Map<String, String> release;
 
-    public AbstractStartSandboxStepImpl(String blueprint)
+    public AbstractStartSandboxStepImpl(String blueprint, Map<String, String> release)
     {
         this.blueprint = blueprint;
+        this.release = release;
     }
 
     public String getBlueprint() {
-        return blueprint;
+        return this.blueprint;
     }
 
-    public String getStage() {
-        return stage;
-    }
-
-    @DataBoundSetter
-    public void setStage(String stage) {
-        this.stage = stage;
-    }
-
-    public String getBranch() {
-        return branch;
-    }
-
-    @DataBoundSetter
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
-
-    public String getChangeset() {
-        return changeset;
-    }
-
-    @DataBoundSetter
-    public void setChangeset(String changeset) {
-        this.changeset = changeset;
+    public Map<String, String> getRelease() {
+        return this.release;
     }
 }
