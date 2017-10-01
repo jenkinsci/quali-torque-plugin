@@ -1,9 +1,6 @@
 package org.jenkinsci.plugins.cs18.service;
 
-import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
-import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
-import org.jenkinsci.plugins.cs18.api.ResponseData;
-import org.jenkinsci.plugins.cs18.api.Sandbox;
+import org.jenkinsci.plugins.cs18.api.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,5 +38,10 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
         Sandbox [] sandboxesArr = new Sandbox[sandboxes.size()];
         sandboxesArr = sandboxes.toArray(sandboxesArr);
         return ResponseData.ok(sandboxesArr,200);
+    }
+
+    @Override
+    public ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws IOException {
+        return null;
     }
 }

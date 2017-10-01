@@ -49,7 +49,7 @@ public class WaitForSandboxStep extends Step {
         return new Execution(stepContext, getSandboxId());
     }
 
-    public static class Execution extends SandboxStepExecution<Sandbox> {
+    public static class Execution extends SandboxStepExecution<SingleSandbox> {
         private final String sandboxId;
 
         protected Execution(@Nonnull StepContext context, String sandboxId) throws Exception {
@@ -59,16 +59,16 @@ public class WaitForSandboxStep extends Step {
 
 
         @Override
-        protected Sandbox run() throws Exception {
+        protected SingleSandbox run() throws Exception {
             return waitForSandbox(sandboxId, 8);
         }
 
-        public Sandbox waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
+        public SingleSandbox waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
             {
-                Sandbox sandbox = getSandbox(sandboxId);
+                SingleSandbox sandbox = getSandbox(sandboxId);
                 if(sandbox != null)
                 {
                     if(waitForSandbox(sandbox))
@@ -79,21 +79,29 @@ public class WaitForSandboxStep extends Step {
             throw new TimeoutException(String.format(Messages.WaitingForSandboxTimeoutError(),timeoutMinutes));
         }
 
-        private Sandbox getSandbox(String sandboxId) throws IOException {
-            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
-            if(!sandboxesRes.isSuccessful()) {
-                throw new AbortException(sandboxesRes.getError());
-            }
-            for(Sandbox sandbox :sandboxesRes.getData()){
-                if (sandbox.id.equals(sandboxId)){
+        private SingleSandbox getSandbox(String sandboxId) throws IOException {
 
-                    return sandbox;
-                }
+            ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(sandboxId);
+            if (!sandboxByIdRes.isSuccessful()){
+                throw new AbortException(sandboxByIdRes.getError());
             }
-            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
+            return sandboxByIdRes.getData();
+
+
+//            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
+//            if(!sandboxesRes.isSuccessful()) {
+//                throw new AbortException(sandboxesRes.getError());
+//            }
+//            for(Sandbox sandbox :sandboxesRes.getData()){
+//                if (sandbox.id.equals(sandboxId)){
+//
+//                    return sandbox;
+//                }
+//            }
+//            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
-        private boolean waitForSandbox(Sandbox sandbox) throws IOException {
+        private boolean waitForSandbox(SingleSandbox sandbox) throws IOException {
             if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.PREPARING) ||
                     sandbox.deploymentStatus.equals(SandboxDeploymentStatus.DEPLOYING))
                 return false;
@@ -108,10 +116,10 @@ public class WaitForSandboxStep extends Step {
             throw new AbortException(Messages.UnknownSandboxDeploymentStatusError(sandbox.id, sandbox.deploymentStatus));
         }
 
-        private String formatAppsDeploymentStatuses(Sandbox sandbox)throws IOException{
+        private String formatAppsDeploymentStatuses(SingleSandbox sandbox)throws IOException{
             StringBuilder builder = new StringBuilder();
             boolean isFirst = true;
-            for (Service service:sandbox.services){
+            for (Service service:sandbox.applications){
                 if (isFirst)
                     isFirst= false;
                 else

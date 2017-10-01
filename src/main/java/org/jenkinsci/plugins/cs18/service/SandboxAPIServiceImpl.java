@@ -3,10 +3,7 @@ package org.jenkinsci.plugins.cs18.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
-import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
-import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
-import org.jenkinsci.plugins.cs18.api.ResponseData;
-import org.jenkinsci.plugins.cs18.api.Sandbox;
+import org.jenkinsci.plugins.cs18.api.*;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -41,6 +38,12 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
     public ResponseData<Sandbox []> getSandboxes() throws RuntimeException, IOException {
         return execute(sandboxAPI.getSandboxes());
     }
+
+    @Override
+    public ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws RuntimeException, IOException {
+        return execute(sandboxAPI.getSandboxById(sandboxId));
+    }
+
 
     public ResponseData<CreateSandboxResponse> createSandbox(final CreateSandboxRequest req) throws IOException {
         return execute(sandboxAPI.createSandbox(req));
