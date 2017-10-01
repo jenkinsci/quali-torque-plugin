@@ -28,7 +28,7 @@ THE SOFTWARE.
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>
-    <f:entry field="stage" title="Stage">
+    <f:entry field="release" title="Release">
         <f:textbox />
     </f:entry>
 </j:jelly>
