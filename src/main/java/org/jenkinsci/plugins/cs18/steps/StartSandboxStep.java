@@ -1,19 +1,25 @@
 package org.jenkinsci.plugins.cs18.steps;
 
+import com.google.common.collect.ImmutableSet;
 import hudson.AbortException;
+import hudson.Extension;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Messages;
+import org.jenkinsci.plugins.cs18.PluginConstants;
 import org.jenkinsci.plugins.cs18.PluginHelpers;
 import org.jenkinsci.plugins.cs18.SandboxStepExecution;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
 import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
 import org.jenkinsci.plugins.cs18.api.ResponseData;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by shay-k on 20/06/2017.
@@ -54,6 +60,24 @@ public class StartSandboxStep extends AbstractStartSandboxStepImpl {
 
             return res.getData().id;
         }
+    }
+
+    @Extension
+    public static class Descriptor extends StepDescriptor {
+
+        @Override
+        public Set<? extends Class<?>> getRequiredContext() {
+            return ImmutableSet.of(Run.class, TaskListener.class);
+        }
+
+        @Override public String getFunctionName() {
+            return  PluginConstants.START_SANDBOX_FUNC_NAME;
+        }
+
+        @Override public String getDisplayName() {
+            return Messages.StartSandbox_FuncDisplayName();
+        }
+
     }
 
 }

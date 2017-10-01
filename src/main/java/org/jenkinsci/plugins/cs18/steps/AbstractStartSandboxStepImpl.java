@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.cs18.steps;
 
 import org.jenkinsci.plugins.workflow.steps.Step;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import java.util.Map;
 
@@ -21,5 +22,10 @@ public abstract class AbstractStartSandboxStepImpl extends Step
 
     public Map<String, String> getRelease() {
         return this.release;
+    }
+
+    @DataBoundSetter
+    public void setRelease(Map<String, String> release) {
+        this.release = release;
     }
 }

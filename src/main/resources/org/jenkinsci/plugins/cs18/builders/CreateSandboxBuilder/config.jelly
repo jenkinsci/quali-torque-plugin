@@ -18,10 +18,7 @@ limitations under the License.
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>
-    <f:entry field="stage" title="Stage">
-        <f:textbox />
-    </f:entry>
-    <f:entry field="serviceNameForHealthCheck" title="Service Name(HealthCheck)">
+    <f:entry field="release" title="Release">
         <f:textbox />
     </f:entry>
 </j:jelly>

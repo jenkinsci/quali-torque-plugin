@@ -34,7 +34,7 @@ How to use 'cs18' DSL:
 Blueprint:
   * Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
 ```
-blueprint = cs18.blueprint('blueprint_name','stage','servicehealthcheck')
+blueprint = cs18.blueprint('blueprint_name', ['appname1': 'version', 'appname2': 'version'])
 ```
   * Use **blueprint.startSandbox** to starts a sandbox and returns a sandbox object which you could stop later.
 ```
