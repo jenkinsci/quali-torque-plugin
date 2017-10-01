@@ -7,10 +7,7 @@ import org.jenkinsci.plugins.cs18.Config;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
 import org.jenkinsci.plugins.cs18.PluginHelpers;
-import org.jenkinsci.plugins.cs18.api.CreateSandboxRequest;
-import org.jenkinsci.plugins.cs18.api.CreateSandboxResponse;
-import org.jenkinsci.plugins.cs18.api.ResponseData;
-import org.jenkinsci.plugins.cs18.api.Sandbox;
+import org.jenkinsci.plugins.cs18.api.*;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIService;
 import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -47,7 +44,7 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
             sandboxAPIService = Config.CreateSandboxAPIService();
         }
 
-        private transient Sandbox sandbox;
+        private transient SingleSandbox sandbox;
 
         @Override
         public boolean start() throws Exception {
@@ -89,18 +86,16 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
             }
 
             sandboxId = res.getData().id;
-            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
-            if(!sandboxesRes.isSuccessful()) {
+
+            ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(sandboxId);
+            if (!sandboxByIdRes.isSuccessful()){
                 throw new AbortException(res.getError());
             }
-            for(Sandbox _sandbox :sandboxesRes.getData()){
-                if (_sandbox.id.equals(sandboxId)){
-                    sandbox = _sandbox;
-                    return true;
-                }
-            }
-            endSandbox(sandboxId,sandboxAPIService,getContext());
-            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
+            sandbox = sandboxByIdRes.getData();
+            return true;
+
+//            endSandbox(sandboxId,sandboxAPIService,getContext());
+//            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
         private static void endSandbox(String sandboxId, SandboxAPIService sandboxAPIService, StepContext stepContext) throws Exception {

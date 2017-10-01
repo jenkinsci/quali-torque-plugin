@@ -72,13 +72,13 @@ class CloudShell implements Serializable {
 
     public static class Sandbox implements Serializable {
         public final CloudShell cs
-        private final org.jenkinsci.plugins.cs18.api.Sandbox sandbox;
+        private final org.jenkinsci.plugins.cs18.api.SingleSandbox sandbox;
 
-        private Sandbox(CloudShell cs, org.jenkinsci.plugins.cs18.api.Sandbox sandbox) {
+        private Sandbox(CloudShell cs, org.jenkinsci.plugins.cs18.api.SingleSandbox sandbox) {
             this.sandbox = sandbox
             this.cs = cs
         }
-        public org.jenkinsci.plugins.cs18.api.Sandbox getData(){
+        public org.jenkinsci.plugins.cs18.api.SingleSandbox getData(){
             return this.sandbox
         }
         public void end(){
