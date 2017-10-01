@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.cs18.steps;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import hudson.AbortException;
 import hudson.EnvVars;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import org.jenkinsci.plugins.cs18.Config;
 import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.cs18.PluginConstants;
@@ -15,6 +18,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
 
@@ -118,6 +122,30 @@ public class SandboxScopeStep extends AbstractStartSandboxStepImpl {
                 endSandbox(sandboxId, sandboxAPIService, stepContext);
             }
 
+        }
+
+    }
+    //@Extension
+    public static class Descriptor extends StepDescriptor {
+
+        @Override
+        public Set<? extends Class<?>> getRequiredContext() {
+            return ImmutableSet.of(Run.class, TaskListener.class);
+        }
+
+        @Override
+        public String getFunctionName() {
+            return PluginConstants.WITH_SANDBOX_FUNC_NAME;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return Messages.WithSandbox_FuncDisplayName();
+        }
+
+        @Override
+        public boolean takesImplicitBlockArgument() {
+            return true;
         }
 
     }

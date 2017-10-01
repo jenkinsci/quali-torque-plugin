@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.cs18.steps
 
+import com.google.gson.Gson
 import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -52,6 +53,8 @@ class CloudShell implements Serializable {
 
         public <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
+                cs.script.echo(blueprint)
+                cs.script.echo(new Gson().toJson(release))
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")

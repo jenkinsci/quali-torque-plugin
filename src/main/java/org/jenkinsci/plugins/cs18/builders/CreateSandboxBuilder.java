@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.cs18.api.ResponseData;
 import org.jenkinsci.plugins.cs18.api.Sandbox;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIService;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeoutException;
 public class CreateSandboxBuilder extends Builder {
 
     private final String blueprint;
-    private final Map<String, String> release;
+    private Map<String, String> release;
     private transient SandboxAPIService sandboxAPIService= null;
 
     @DataBoundConstructor
@@ -43,6 +44,11 @@ public class CreateSandboxBuilder extends Builder {
 
     public Map<String, String> getRelease() {
         return this.release;
+    }
+
+    @DataBoundSetter
+    public void setRelease(Map<String, String> release) {
+        this.release = release;
     }
 
     @Override
