@@ -14,7 +14,6 @@ try {
                     devops = load('/var/lib/jenkins/devopsLoader.groovy').loadDevops(devopsVersion)
                 }
             }
-
             stage('Checkout') {
                 devops.resetWorkspace(devopsVersion)
                 dir('cs18') {
@@ -24,10 +23,18 @@ try {
                     changeset = scmVars.GIT_COMMIT
                 }
             }
+            stage('Install Requirements') {
+                devops.runSh('apt-get update&& apt-get install -y openjdk-8-jdk')
+                devops.runSh('apt-get install -y maven')
+                devops.runSh('apt-get install -y openjdk-8-jdk')
+            }
             stage('Clean, Build & Package') {
                 dir('cs18') {
                     devops.runSh('ls')
-                    devops.runSh('mvn -B -DskipTests clean package')
+                    devops.runSh('mvn -B -DskipTests package')
+                    dir('target'){
+                        devops.uploadArtifact("cs18.hpi")
+                    }
                 }
             }
         }
