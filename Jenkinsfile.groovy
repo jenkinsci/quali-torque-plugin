@@ -26,7 +26,7 @@ try {
             }
             stage('Clean, Build & Package') {
                 dir('cs18') {
-                    devops.runSh('ll')
+                    devops.runSh('ls')
                     devops.runSh('mvn -B -DskipTests clean package')
                 }
             }
