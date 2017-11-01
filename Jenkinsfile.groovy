@@ -24,7 +24,7 @@ try {
                 }
             }
             stage('Install Requirements') {
-                devops.runSh('apt-get update&& apt-get install -y openjdk-8-jdk')
+                devops.runSh('apt-get update')
                 devops.runSh('apt-get install -y maven')
                 devops.runSh('apt-get install -y openjdk-8-jdk')
             }
