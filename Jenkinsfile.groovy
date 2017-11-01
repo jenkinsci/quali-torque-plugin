@@ -24,25 +24,16 @@ try {
                     changeset = scmVars.GIT_COMMIT
                 }
             }
-
-            stage('Build') {
-                dir('cs18-app/server') {
-                    devops.runSh('dotnet restore')
-                    devops.runSh('dotnet build')
-                }
-            }
-            stage('Build') {
+            stage('Clean, Build & Package') {
                 steps {
-                    sh 'mvn -B -DskipTests clean package'
+                    dir('cs18') {
+                        devops.runSh('mvn -B -DskipTests clean package')
+                    }
                 }
             }
         }
     }
 }
 catch (Exception ex) {
-    // abugov: send email is only temporary
-    //if (devops != null)
-    //devops.sendMail("devops@quali.com", "build failed", "sorry for this email will be removed soon (sent from Jenkinsfile.groovy of tryops/master)")
-
     throw ex
 }
