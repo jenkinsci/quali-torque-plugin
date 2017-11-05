@@ -28,13 +28,22 @@ try {
                 devops.runSh('apt-get install -y maven')
                 devops.runSh('apt-get install -y openjdk-8-jdk')
             }
-            stage('Clean, Build & Package') {
+            stage('Clean, Package & upload') {
                 dir('cs18') {
                     devops.runSh('ls')
-                    devops.runSh('mvn -B -DskipTests package')
+                    devops.runSh('mvn -B clean package')
                     dir('target'){
                         devops.uploadArtifact("cs18.hpi")
+                        devops.uploadToS3("cs18.hpi", "ngdevbox/applications/jenkins/${changeset}")
                     }
+                }
+            }
+            stage('Integration test'){
+                def release = [:]
+                release['jenkins'] = changeset
+                cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
+                    writeFile file: 'test_execution_data_aws', text: "${env.SANDBOX}"
+                    echo "inside the sandbox! "${env.SANDBOX}
                 }
             }
         }
