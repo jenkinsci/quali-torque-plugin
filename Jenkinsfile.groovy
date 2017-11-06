@@ -34,6 +34,8 @@ try {
                     devops.runSh('mvn -B clean package')
                     dir('target'){
                         devops.uploadArtifact("cs18.hpi")
+                        writeFile file: 'branch.txt', text: "${env.BRANCH_NAME}"
+                        devops.uploadToS3("branch.txt", "ngdevbox/applications/jenkins/${changeset}")
                         devops.uploadToS3("cs18.hpi", "ngdevbox/applications/jenkins/${changeset}")
                     }
                 }
@@ -42,7 +44,7 @@ try {
                 def release = [:]
                 release['jenkins'] = changeset
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
-                    writeFile file: 'test_execution_data_aws', text: "${env.SANDBOX}"
+                    echo "branch: "${env.BRANCH_NAME}
                     echo "inside the sandbox! "${env.SANDBOX}
                 }
             }
