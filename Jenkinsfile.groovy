@@ -29,7 +29,7 @@ try {
                     devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
-                        writeFile file: 'branch.txt', text: env.BRANCH_NAME
+                        writeFile file: 'branch.txt', text: "${env.BRANCH_NAME}"
                         devops.runSh('ls')
                         echo "${changeset}"
                         devops.uploadArtifact("cs18.hpi")
@@ -46,8 +46,10 @@ try {
                 release['jenkins'] = changeset
                 cs18.blueprint("n-ca-jenkins-aws", release).startSandbox()
 //                {
-//                    echo "branch: ${env.BRANCH_NAME}"
-//                    echo "inside the sandbox! ${env.SANDBOX}"
+//                    writeFile file: 'sandbox_data.json', text: "${env.SANDBOX}"
+//                    def sandbox = readJSON file: 'sandbox_data.json'
+//                    def url = sandbox.applications["cs18-api"].shortcuts
+//                    sh "curl -X POST ${url}/job/test1/build"
 //                }
             }
         }
