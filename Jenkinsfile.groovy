@@ -30,7 +30,7 @@ try {
                     devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
-                        writeFile file: 'branch.txt', text: "koko"
+                        writeFile file: 'branch.txt', text: env.BRANCH_NAME
                         devops.runSh('ls')
                         echo "${changeset}"
                         devops.uploadArtifact("cs18.hpi")
