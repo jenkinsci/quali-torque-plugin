@@ -44,13 +44,12 @@ try {
             stage('Integration test'){
                 def release = [:]
                 release['jenkins'] = changeset
-                cs18.blueprint("n-ca-jenkins-aws", release).startSandbox()
-//                {
-//                    writeFile file: 'sandbox_data.json', text: "${env.SANDBOX}"
-//                    def sandbox = readJSON file: 'sandbox_data.json'
-//                    def url = sandbox.applications["cs18-api"].shortcuts
-//                    sh "curl -X POST ${url}/job/test1/build"
-//                }
+                cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox() {
+                    writeFile file: 'sandbox_data.json', text: "${env.SANDBOX}"
+                    def sandbox = readJSON file: 'sandbox_data.json'
+                    def url = sandbox.applications["cs18-api"].shortcuts
+                    sh "curl -X POST ${url}/job/test1/build"
+                }
             }
         }
     }
