@@ -29,7 +29,7 @@ try {
                     devops.runSh('ls')
                     devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
-                        echo "branch: "${env.BRANCH_NAME}
+                        echo "branch: ${env.BRANCH_NAME}"
                         writeFile file: 'branch.txt', text: "koko"
                         devops.runSh('ls')
                         echo "${changeset}"
@@ -46,7 +46,7 @@ try {
                 def release = [:]
                 release['jenkins'] = changeset
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
-                    echo "branch: "${env.BRANCH_NAME}
+                    echo "branch: ${env.BRANCH_NAME}"
                     echo "inside the sandbox! "${env.SANDBOX}
                 }
             }
