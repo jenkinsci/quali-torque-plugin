@@ -47,7 +47,7 @@ try {
                 release['jenkins'] = changeset
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
                     echo "branch: ${env.BRANCH_NAME}"
-                    echo "inside the sandbox! "${env.SANDBOX}
+                    echo "inside the sandbox! ${env.SANDBOX}"
                 }
             }
         }
