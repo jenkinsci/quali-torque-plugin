@@ -23,11 +23,7 @@ try {
                     changeset = scmVars.GIT_COMMIT
                 }
             }
-            stage('Install Requirements') {
-                devops.runSh('apt-get update')
-                devops.runSh('apt-get install -y maven')
-                devops.runSh('apt-get install -y openjdk-8-jdk')
-            }
+            
             stage('Clean, Package & upload') {
                 dir('cs18') {
                     devops.runSh('ls')
