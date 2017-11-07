@@ -29,6 +29,7 @@ try {
                     devops.runSh('ls')
                     devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
+                        echo "branch: "${env.BRANCH_NAME}
                         writeFile file: 'branch.txt', text: "koko"
                         devops.runSh('ls')
                         echo "${changeset}"
