@@ -31,12 +31,17 @@ try {
             stage('Clean, Package & upload') {
                 dir('cs18') {
                     devops.runSh('ls')
-                    devops.runSh('mvn -B clean package')
+                    devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
-                        devops.uploadArtifact("cs18.hpi")
                         writeFile file: 'branch.txt', text: "${env.BRANCH_NAME}"
+                        devops.runSh('ls')
+                        echo ${changeset}
+                        devops.uploadArtifact("cs18.hpi")
+                        echo "uploadArtifact cs18.hpi"
                         devops.uploadToS3("branch.txt", "ngdevbox/applications/jenkins/${changeset}")
+                        echo "uploadToS3 branch.txt"
                         devops.uploadToS3("cs18.hpi", "ngdevbox/applications/jenkins/${changeset}")
+                        echo "uploadToS3 cs18.hpi"
                     }
                 }
             }
