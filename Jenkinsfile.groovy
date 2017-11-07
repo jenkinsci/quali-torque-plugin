@@ -31,7 +31,7 @@ try {
                     dir('target'){
                         writeFile file: 'branch.txt', text: "${env.BRANCH_NAME}"
                         devops.runSh('ls')
-                        echo ${changeset}
+                        echo "${changeset}"
                         devops.uploadArtifact("cs18.hpi")
                         echo "uploadArtifact cs18.hpi"
                         devops.uploadToS3("branch.txt", "ngdevbox/applications/jenkins/${changeset}")
