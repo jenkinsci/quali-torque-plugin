@@ -26,7 +26,6 @@ try {
             
             stage('Clean, Package & upload') {
                 dir('cs18') {
-                    devops.runSh('ls')
                     devops.runSh('mvn -B package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
@@ -45,10 +44,11 @@ try {
             stage('Integration test'){
                 def release = [:]
                 release['jenkins'] = changeset
-                cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
-                    echo "branch: ${env.BRANCH_NAME}"
-                    echo "inside the sandbox! ${env.SANDBOX}"
-                }
+                cs18.blueprint("n-ca-jenkins-aws", release).startSandbox()
+//                {
+//                    echo "branch: ${env.BRANCH_NAME}"
+//                    echo "inside the sandbox! ${env.SANDBOX}"
+//                }
             }
         }
     }
