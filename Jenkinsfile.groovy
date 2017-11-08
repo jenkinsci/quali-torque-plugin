@@ -45,10 +45,15 @@ try {
                 def release = [:]
                 release['jenkins'] = changeset
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox() {
+                    echo "sanbox env: ${env.SANDBOX}"
                     writeFile file: 'sandbox_data.json', text: "${env.SANDBOX}"
+                    devops.runSh('cat sandbox_data.json')
+                    sh "curl -X GET --header 'Accept: application/json' 'http://13.57.124.229:5050/api/sandboxes' > sandboxes"
+                    def sandboxes = readJSON file: 'sandboxes'
                     def sandbox = readJSON file: 'sandbox_data.json'
                     def url = sandbox.applications["cs18-api"].shortcuts
-                    sh "curl -X POST ${url}/job/test1/build"
+                    //start job named test1
+                    devops.runSh('curl -X POST ${url}/job/test1/build')
                 }
             }
         }
