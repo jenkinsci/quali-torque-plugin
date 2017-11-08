@@ -48,9 +48,11 @@ try {
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox() {
                     echo "sanbox env: ${env.SANDBOX}"
                     def sandbox = readJSON text: "${env.SANDBOX}"
-                    def url = sandbox.applications[0].shortcuts
+                    def url = sandbox.applications[0].shortcuts[0]
+                    echo "url: ${url}"
                     //start job named test1
-                    devops.runSh("curl -X POST ${url}/job/test1/build")
+                    def jobName=test1
+                    echo devops.runJenkinsJob(url,jobName)
                 }
             }
         }
