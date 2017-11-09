@@ -27,10 +27,10 @@ try {
             
             stage('Clean, Package & upload') {
                 dir('cs18') {
-                    devops.runSh('mvn -B package') // TODO: add clean
+                    devops.runSh('mvn -B -offline package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
-                        writeFile file: 'branch.txt', text: $env.BRANCH_NAME
+                        devops.runSh("echo ${env.BRANCH_NAME} > branch.txt")
                         devops.runSh('ls')
                         echo "${changeset}"
                         devops.uploadArtifact("cs18.hpi")
