@@ -45,9 +45,9 @@ try {
             stage('Integration test'){
                 def release = [:]
                 release['jenkins'] = changeset
-                release['cs18-api'] = changeset
-                release['cs18-account-ms'] = changeset
-                release['cs18-db'] = changeset
+                release['cs18-api'] = 'forFE'
+                release['cs18-account-ms'] = 'forFE'
+                release['cs18-db'] = 'forFE'
                 cs18.blueprint("n-ca-jenkins-aws", release).startSandbox() //{
                     //echo "sanbox env: ${env.SANDBOX}"
                     //def sandbox = readJSON text: "${env.SANDBOX}"
