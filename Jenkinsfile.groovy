@@ -27,7 +27,7 @@ try {
             
             stage('Clean, Package & upload') {
                 dir('cs18') {
-                    devops.runSh('mvn -B -offline package') // TODO: add clean
+                    devops.runSh('mvn -B -offline -Dmaven.test.skip=true package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
                         devops.runSh("echo ${env.BRANCH_NAME} > branch.txt")
@@ -51,7 +51,7 @@ try {
                     def url = sandbox.applications[0].shortcuts[0]
                     echo "url: ${url}"
                     //start job named test1
-                    def jobName=test1
+                    def jobName="test1"
                     echo devops.runJenkinsJob(url,jobName)
                 }
             }
