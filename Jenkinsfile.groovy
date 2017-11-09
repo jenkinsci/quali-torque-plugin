@@ -27,7 +27,7 @@ try {
             
             stage('Clean, Package & upload') {
                 dir('cs18') {
-                    devops.runSh('mvn -B -offline -Dmaven.test.skip=true package') // TODO: add clean
+                    devops.runSh('mvn -B -Dmaven.test.skip=true package') // TODO: add clean
                     dir('target'){
                         echo "branch: ${env.BRANCH_NAME}"
                         devops.runSh("echo ${env.BRANCH_NAME} > branch.txt")
