@@ -1,7 +1,7 @@
 try {
     node('master') {
         timestamps {
-            stage(Publish Blueprint){
+            stage('Publish Blueprint'){
                 sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sabox.com:5050/api/catalog'"
             }
             stage('Integration Test') {
