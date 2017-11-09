@@ -52,7 +52,7 @@ try {
                     echo "url: ${url}"
                     //start job named test1
                     def jobName="test1"
-                    echo devops.runJenkinsJob(url, jobName, true)
+                    echo devops.runJenkinsJob(jobName,url, true)
                 }
             }
         }
