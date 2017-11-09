@@ -45,7 +45,7 @@ try {
             stage('Integration test'){
                 def release = [:]
                 release['jenkins'] = changeset
-                cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox() {
+                cs18.blueprint("n-ca-jenkins-aws", release).startSandbox()//doInsideSandbox() {
                     echo "sanbox env: ${env.SANDBOX}"
                     def sandbox = readJSON text: "${env.SANDBOX}"
                     def url = sandbox.applications[0].shortcuts[0]
@@ -53,7 +53,7 @@ try {
                     //start job named test1
                     def jobName="test1"
                     echo devops.runJenkinsJob(jobName,url, true)
-                }
+                //}
             }
         }
     }
