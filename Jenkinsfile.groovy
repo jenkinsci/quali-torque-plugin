@@ -28,7 +28,7 @@ try {
             stage('Clean, Package & upload') {
                 dir('cs18') {
                     devops.runSh('mvn -B -Dmaven.test.skip=true package') // TODO: add clean
-                    devops.runSh("chmod 777 target") //somehow there is a problem with permissions!?
+                    devops.grantFullPermissions("target") //somehow there is a problem with permissions!?
                     dir('target'){
                         echo "branch: '${env.BRANCH_NAME}'"
                         devops.runSh("echo '${env.BRANCH_NAME}' > branch.txt")
