@@ -49,8 +49,8 @@ try {
                 release['cs18-api'] = 'forFE'
                 release['cs18-account-ms'] = 'forFE'
                 release['cs18-db'] = 'forFE'
-                cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox{
-                    try {
+                try {
+                    cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
                         echo "sanbox env: ${env.SANDBOX}"
                         def sandbox = readJSON text: "${env.SANDBOX}"
                         def url
@@ -64,10 +64,11 @@ try {
                         }
                         echo "url: ${url}"
                         echo devops.runJenkinsJob(jobName, url, true)
+
                     }
-                    finally {
-                        sleep 3000
-                    }
+                }
+                finally {
+                    sleep 3000
                 }
             }
         }
