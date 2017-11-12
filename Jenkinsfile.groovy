@@ -63,7 +63,13 @@ try {
                             }
                         }
                         echo "url: ${url}"
-                        echo devops.runJenkinsJob(jobName, url, true)
+
+                        try {
+                            echo devops.runJenkinsJob(jobName, url, true)
+                        }
+                        finally{
+                            sleep 3000
+                        }
 
                     }
                 }
