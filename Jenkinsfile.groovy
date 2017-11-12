@@ -51,10 +51,16 @@ try {
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox{
                     echo "sanbox env: ${env.SANDBOX}"
                     def sandbox = readJSON text: "${env.SANDBOX}"
-                    def url = sandbox.applications[0].shortcuts[0]
-                    echo "url: ${url}"
+                    def url
                     //start job named test1
                     def jobName="test1"
+                    for(application in sandbox.applications) {
+                        if (application["name"] == "jenkins") {
+                            url = application["shortcuts"][0]
+                            break
+                        }
+                    }
+                    echo "url: ${url}"
                     echo devops.runJenkinsJob(jobName,url, true)
                     sleep 3000
                 }
