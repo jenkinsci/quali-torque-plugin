@@ -28,10 +28,10 @@ try {
             stage('Clean, Package & upload') {
                 dir('cs18') {
                     devops.runSh('mvn -B -Dmaven.test.skip=true package') // TODO: add clean
-                    devops.runSh("chmod 774 target") //somehow there is a problem with permissions!?
+                    devops.runSh("chmod 777 target") //somehow there is a problem with permissions!?
                     dir('target'){
-                        echo "branch: ${env.BRANCH_NAME}"
-                        devops.runSh("echo ${env.BRANCH_NAME} > branch.txt")
+                        echo "branch: '${env.BRANCH_NAME}'"
+                        devops.runSh("echo '${env.BRANCH_NAME}' > branch.txt")
                         devops.runSh('ls')
                         echo "${changeset}"
                         devops.uploadArtifact("cs18.hpi")
