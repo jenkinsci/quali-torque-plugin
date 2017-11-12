@@ -49,20 +49,24 @@ try {
                 release['cs18-account-ms'] = 'forFE'
                 release['cs18-db'] = 'forFE'
                 cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox{
-                    echo "sanbox env: ${env.SANDBOX}"
-                    def sandbox = readJSON text: "${env.SANDBOX}"
-                    def url
-                    //start job named test1
-                    def jobName="test1"
-                    for(application in sandbox.applications) {
-                        if (application["name"] == "jenkins") {
-                            url = application["shortcuts"][0]
-                            break
+                    try {
+                        echo "sanbox env: ${env.SANDBOX}"
+                        def sandbox = readJSON text: "${env.SANDBOX}"
+                        def url
+                        //start job named test1
+                        def jobName = "test1"
+                        for (application in sandbox.applications) {
+                            if (application["name"] == "jenkins") {
+                                url = application["shortcuts"][0]
+                                break
+                            }
                         }
+                        echo "url: ${url}"
+                        echo devops.runJenkinsJob(jobName, url, true)
                     }
-                    echo "url: ${url}"
-                    echo devops.runJenkinsJob(jobName,url, true)
-                    sleep 3000
+                    finally {
+                        sleep 3000
+                    }
                 }
             }
         }
