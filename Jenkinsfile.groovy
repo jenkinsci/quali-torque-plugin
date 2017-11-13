@@ -62,7 +62,8 @@ try {
                         }
                     }
                     echo "url: ${url}"
-                    echo devops.runJenkinsJob(jobName, url, true)
+                    echo devops.runJenkinsJob(jobName, url, true) > 'innerLog.txt'
+                    devops.uploadArtifact("innerLog.txt")
                 }
             }
         }
