@@ -74,7 +74,7 @@ try {
                         def innerLog = devops.runJenkinsJob(jobName, url, true)
                         writeFile file: 'innerLog.txt', text: innerLog
                         devops.uploadArtifact("innerLog.txt")
-                    }/*
+                    }*/
                 }
             }
         }
