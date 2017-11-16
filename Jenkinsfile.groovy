@@ -58,7 +58,7 @@ try {
                     release['cs18-account-ms'] = 'forDexter'
                     release['cs18-db'] = 'forDexter'
                     cs18.blueprint("n-ca-jenkins-aws", release).startSandbox()
-                    /*doInsideSandbox {
+                    doInsideSandbox {
                         echo "sanbox env: ${env.SANDBOX}"
                         def sandbox = readJSON text: "${env.SANDBOX}"
                         def url
@@ -74,7 +74,7 @@ try {
                         def innerLog = devops.runJenkinsJob(jobName, url, true)
                         writeFile file: 'innerLog.txt', text: innerLog
                         devops.uploadArtifact("innerLog.txt")
-                    }*/
+                    }
                 }
             }
         }
