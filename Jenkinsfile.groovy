@@ -29,9 +29,11 @@ try {
                 stage('Clean, Package & upload') {
                     dir('cs18') {
                         if( env.BRANCH_NAME.equals('master') ) {
+                            echo "in master branch - running maven with clean"
                             devops.runSh('mvn -B clean package')
                         }
                         else{
+                            echo "NOT in master branch - running maven without clean"
                             devops.runSh('mvn -B package')
                         }
                         devops.grantFullPermissions("target") //somehow there is a problem with permissions!?
