@@ -47,6 +47,7 @@ class CloudShell implements Serializable {
                 cs.script.echo("health check done!")
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("sandbox under test details:${sandboxJson}")
+                cs.script.withEnv(["SANDBOX=${sandboxJson}"]) {}
             }
             return new Sandbox(this.cs,sandbox)
         }
