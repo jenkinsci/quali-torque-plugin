@@ -38,7 +38,7 @@ class CloudShell implements Serializable {
             this.release = release
         }
 
-        public Sandbox startSandbox(){
+        public String startSandbox(){
             def sandbox
             cs.node {
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
@@ -47,9 +47,8 @@ class CloudShell implements Serializable {
                 cs.script.echo("health check done!")
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("sandbox under test details:${sandboxJson}")
-                cs.script.withEnv(["SANDBOX=${sandboxJson}"]) {}
             }
-            return new Sandbox(this.cs,sandbox)
+            return sandboxJson
         }
 
         public <V> V doInsideSandbox(Closure<V> body) {
