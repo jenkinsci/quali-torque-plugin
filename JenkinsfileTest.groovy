@@ -14,8 +14,9 @@ try {
                         echo "doInsideSandbox - from the enviroment param - env.SANDBOX: ${env.SANDBOX}"
                     }
 
+                    def sandbox
                     try {
-                        def sandbox = cs18.blueprint("fasty-k8s", release).startSandbox()
+                        sandbox = cs18.blueprint("fasty-k8s", release).startSandbox()
                         def sandboxJson = JSONObject.fromObject(sandbox).toString()
                         echo "startSandbox - from the enviroment param - sandboxJson: ${sandboxJson}"
                     }
