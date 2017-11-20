@@ -73,6 +73,10 @@ try {
                         def innerLog = devops.runJenkinsJob(jobName, url, true)
                         writeFile file: 'innerLog.txt', text: innerLog
                         devops.uploadArtifact("innerLog.txt")
+
+                        if(innerLog.contains("\"result\":\"FAILURE\"")){
+                            throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
+                        }
                     }
                 }
             }
