@@ -15,7 +15,7 @@ try {
                     def sandbox
                     try {
                         sandbox = cs18.blueprint("fasty-k8s", release).startSandbox()
-                        echo "startSandbox - from the enviroment param - sandboxJson: ${sandboxJson}"
+                        echo "startSandbox - from the enviroment param - sandbox: ${sandbox}"
                     }
                     finally {
                         sandbox.end()
