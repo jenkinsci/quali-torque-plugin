@@ -1,3 +1,5 @@
+import net.sf.json.JSONObject
+
 try {
     node('master') {
         timeout(time: 60, unit: 'MINUTES') {
@@ -14,7 +16,8 @@ try {
 
                     try {
                         def sandbox = cs18.blueprint("fasty-k8s", release).startSandbox()
-                        echo "startSandbox - from the enviroment param - env.SANDBOX: ${env.SANDBOX}"
+                        def sandboxJson = JSONObject.fromObject(sandbox).toString()
+                        echo "startSandbox - from the enviroment param - sandboxJson: ${sandboxJson}"
                     }
                     finally {
                         sandbox.end()
