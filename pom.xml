@@ -12,7 +12,7 @@
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>cs18</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.5-${maven.build.timestamp}</version>
   <packaging>hpi</packaging>
 
   <properties>
@@ -36,6 +36,11 @@
     <developer>
       <name>Shay Keren</name>
       <email>shay.k@quali.com</email>
+      <organization>Quali</organization>
+    </developer>
+    <developer>
+      <name>Tomer Cohen</name>
+      <email>tomer.c@quali.com</email>
       <organization>Quali</organization>
     </developer>
   </developers>
@@ -96,5 +101,4 @@
           <version>RELEASE</version>
       </dependency>
   </dependencies>
-
 </project>

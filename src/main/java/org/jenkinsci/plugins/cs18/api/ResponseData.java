@@ -19,17 +19,8 @@ public class ResponseData<T>implements Serializable {
         return data;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
     public String getError() {
         return error;
-    }
-
-
-    private ResponseData(int statusCode){
-        this.statusCode = statusCode;
     }
 
     private ResponseData(T data, int statusCode){
@@ -51,11 +42,6 @@ public class ResponseData<T>implements Serializable {
 
     public boolean isSuccessful(){
         return this.error == null;
-    }
-
-
-    public String getMessage() {
-        return message;
     }
 
     public <T> ResponseData<T> setMessage(String message) {

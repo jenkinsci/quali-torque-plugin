@@ -63,7 +63,7 @@ class CloudShell implements Serializable {
                     def sandboxJson =JSONObject.fromObject(sandbox).toString()
                     cs.script.echo("sandbox under test details:${sandboxJson}")
                     cs.script.withEnv(["SANDBOX=${sandboxJson}"]) {
-                        body()
+                        body.call(sandboxJson)
                     }
                 }
                 finally {

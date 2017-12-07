@@ -5,6 +5,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import java.util.Map;
 
+//TODO: should move to StartSandboxStep
 public abstract class AbstractStartSandboxStepImpl extends Step
 {
     private final String blueprint;

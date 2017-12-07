@@ -54,7 +54,7 @@ try {
                 stage('Integration test') {
                     def release = [:]
                     release['jenkins'] = changeset
-                    release['cs18-api'] = 'forFE'
+                    release['cs18-api'] = 'forDexter'
                     release['cs18-account-ms'] = 'forDexter'
                     release['cs18-db'] = 'forDexter'
                     cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
