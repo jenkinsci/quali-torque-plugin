@@ -8,17 +8,23 @@ try {
                 stage('Integration Test') {
                     def release = [:]
                     release["fasty"] = ""
-                    cs18.blueprint("fasty-k8s", release).doInsideSandbox() {
+
+                    echo "testing doInsideSandbox"
+                    cs18.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details->
                         echo "doInsideSandbox - from the enviroment param - env.SANDBOX: ${env.SANDBOX}"
+                        echo "sandbox_details - from delegate param: $sandbox_details"
                     }
 
+                    echo "testing startSandbox"
                     def sandbox
                     try {
-                        sandbox = cs18.blueprint("fasty-k8s", release).startSandbox()
+                        sandbox = cs18.blueprint("fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
                         echo "startSandbox - from the enviroment param - sandbox: ${sandbox}"
                     }
                     finally {
+                        echo "before sandbox.end()"
                         sandbox.end()
+                        echo "after sandbox.end()"
                     }
                 }
             }
