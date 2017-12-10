@@ -12,8 +12,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, String blueprintName, Map<String, String> release, Integer timeout) {
-        return new Blueprint(this, blueprint, blueprintName, release, timeout)
+    public Blueprint blueprint(String blueprint, String sandboxName, Map<String, String> release, Integer timeout) {
+        return new Blueprint(this, blueprint, sandboxName, release, timeout)
     }
 
     private <V> V node(Closure<V> body) {
