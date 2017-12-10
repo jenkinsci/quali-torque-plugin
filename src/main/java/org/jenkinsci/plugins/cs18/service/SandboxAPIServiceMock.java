@@ -8,23 +8,23 @@ import java.util.List;
 import java.util.UUID;
 
 public class SandboxAPIServiceMock implements SandboxAPIService{
-    private List<Sandbox> sandboxes = new ArrayList<Sandbox>();
+    private static List<SingleSandbox> sandboxes = new ArrayList<SingleSandbox>();
     @Override
     public ResponseData<CreateSandboxResponse> createSandbox(CreateSandboxRequest req) throws IOException {
         CreateSandboxResponse res = new CreateSandboxResponse();
         res.id= UUID.randomUUID().toString();
-        Sandbox sandbox = new Sandbox();
+        SingleSandbox sandbox = new SingleSandbox();
         sandbox.id = res.id;
         sandbox.name = "sandbox-"+res.id;
+        sandbox.deploymentStatus = SandboxDeploymentStatus.DONE;
         sandboxes.add(sandbox);
         return ResponseData.ok(res,200);
     }
 
-
     @Override
     public ResponseData<Void> deleteSandbox(String sandboxId) throws IOException {
-        Sandbox mach = null;
-        for(Sandbox sandbox: sandboxes){
+        SingleSandbox mach = null;
+        for(SingleSandbox sandbox: sandboxes){
             if(sandbox.id == sandboxId){
                 mach = sandbox;
             }
@@ -42,6 +42,12 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
 
     @Override
     public ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws IOException {
-        return null;
+        SingleSandbox mach = null;
+        for(SingleSandbox sandbox: sandboxes){
+            if(sandbox.id == sandboxId){
+                mach = sandbox;
+            }
+        }
+        return ResponseData.ok(mach, 200);
     }
 }

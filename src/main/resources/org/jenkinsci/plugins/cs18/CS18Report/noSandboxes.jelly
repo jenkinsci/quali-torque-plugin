@@ -1,5 +1,0 @@
-<?jelly escape-by-default='true'?>
-<div id="no-sandboxes">
-  ${%Welcome to the CS18 Report.}
-  ${%There are no sandboxes.  Start working!}
-</div>

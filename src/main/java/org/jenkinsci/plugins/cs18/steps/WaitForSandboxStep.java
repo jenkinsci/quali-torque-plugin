@@ -27,11 +27,13 @@ import java.util.concurrent.TimeoutException;
 public class WaitForSandboxStep extends Step {
 
     private String sandboxId;
+    private Integer timeout;
 
     @DataBoundConstructor
-    public WaitForSandboxStep(@Nonnull String sandboxId)
+    public WaitForSandboxStep(@Nonnull String sandboxId, @Nonnull Integer timeout)
     {
         this.sandboxId = sandboxId;
+        this.timeout = timeout;
     }
 
     @DataBoundSetter
@@ -46,21 +48,22 @@ public class WaitForSandboxStep extends Step {
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getSandboxId());
+        return new Execution(stepContext, getSandboxId(), timeout);
     }
 
     public static class Execution extends SandboxStepExecution<SingleSandbox> {
         private final String sandboxId;
+        private Integer timeout;
 
-        protected Execution(@Nonnull StepContext context, String sandboxId) throws Exception {
+        protected Execution(@Nonnull StepContext context, String sandboxId, Integer timeout) throws Exception {
             super(context);
             this.sandboxId = sandboxId;
+            this.timeout = timeout;
         }
-
 
         @Override
         protected SingleSandbox run() throws Exception {
-            return waitForSandbox(sandboxId, 8);
+            return waitForSandbox(sandboxId, timeout);
         }
 
         public SingleSandbox waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
@@ -87,18 +90,6 @@ public class WaitForSandboxStep extends Step {
             }
             return sandboxByIdRes.getData();
 
-
-//            ResponseData<Sandbox[]> sandboxesRes = sandboxAPIService.getSandboxes();
-//            if(!sandboxesRes.isSuccessful()) {
-//                throw new AbortException(sandboxesRes.getError());
-//            }
-//            for(Sandbox sandbox :sandboxesRes.getData()){
-//                if (sandbox.id.equals(sandboxId)){
-//
-//                    return sandbox;
-//                }
-//            }
-//            throw new AbortException(String.format(Messages.SandboxNotExistsError(),sandboxId));
         }
 
         private boolean waitForSandbox(SingleSandbox sandbox) throws IOException {

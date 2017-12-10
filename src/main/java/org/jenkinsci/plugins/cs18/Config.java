@@ -8,7 +8,11 @@ import org.jenkinsci.plugins.cs18.service.SandboxAPIService;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIServiceImpl;
 import org.jenkinsci.plugins.cs18.service.SandboxAPIServiceMock;
 import org.jenkinsci.plugins.cs18.service.SandboxServiceConnection;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.ProxyWhitelist;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.StaticWhitelist;
 import org.kohsuke.stapler.StaplerRequest;
+
+import java.io.IOException;
 
 /**
  * Created by shay-k on 20/06/2017.
@@ -24,8 +28,8 @@ public class Config extends AbstractDescribableImpl<Config> {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static SandboxAPIService CreateSandboxAPIService() throws Exception {
-        //return new SandboxAPIServiceMock();
-        return new SandboxAPIServiceImpl(DESCRIPTOR.getAPIConnection());
+        return new SandboxAPIServiceMock();
+//        return new SandboxAPIServiceImpl(DESCRIPTOR.getAPIConnection());
     }
 
     public static final class DescriptorImpl extends Descriptor<Config> {

@@ -1,0 +1,5 @@
+#cs18 jenkins plugin
+
+field org.jenkinsci.plugins.cs18.api.SingleSandbox id
+staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.lang.Object java.lang.String
+

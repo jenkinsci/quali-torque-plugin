@@ -12,8 +12,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint, Map<String, String> release){
-        return new Blueprint(this, blueprint, release)
+    public Blueprint blueprint(String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
+        return new Blueprint(this, blueprint, sandboxName, release, timeout)
     }
 
     private <V> V node(Closure<V> body) {
@@ -31,8 +31,12 @@ class CloudShell implements Serializable {
         public final CloudShell cs
         private final String blueprint
         private final Map<String, String> release
+        private String sandboxName
+        private int timeout
 
-        private Blueprint(CloudShell cs, String blueprint, Map<String, String> release) {
+        private Blueprint(CloudShell cs, String blueprint, String sandboxName, Map<String, String> release, Integer timeout) {
+            this.timeout = timeout
+            this.sandboxName = sandboxName
             this.blueprint = blueprint
             this.cs = cs
             this.release = release
@@ -41,9 +45,9 @@ class CloudShell implements Serializable {
         public Sandbox startSandbox(){
             def sandbox
             cs.node {
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
+                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
                 cs.script.echo("health check done!")
                 def sandboxJson = JSONObject.fromObject(sandbox).toString()
                 cs.script.echo("sandbox under test details:${sandboxJson}")
@@ -55,15 +59,15 @@ class CloudShell implements Serializable {
             cs.node {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, release: release)
+                def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId)
+                    def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done!")
                     def sandboxJson =JSONObject.fromObject(sandbox).toString()
                     cs.script.echo("sandbox under test details:${sandboxJson}")
                     cs.script.withEnv(["SANDBOX=${sandboxJson}"]) {
-                        body()
+                        body.call(sandbox)
                     }
                 }
                 finally {
