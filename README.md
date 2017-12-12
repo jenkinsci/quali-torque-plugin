@@ -2,13 +2,13 @@
 
 ## Prerequisite
 
-1) CS18 server must be running.
+1) colony server must be running.
 
 2) Jenkins server 2.3 and above.
 
 ## Architecture
 
-1) open port between Jenkins Slaves and the CS18 API Server
+1) open port between Jenkins Slaves and the colony API Server
 
 
 ## Installation
@@ -20,21 +20,21 @@
 
 4) Restart jenkins
 
-## Configuring CS18 in Jenkins
+## Configuring colony in Jenkins
 1) Navigate to the main Jenkins settings page
 
-2) Fill all fields under "CS18 connection" section.
+2) Fill all fields under "colony connection" section.
 
 ![Alt text](images/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
 
-How to use 'cs18' DSL:
+How to use 'colony' DSL:
 
 Blueprint:
-  * Use **cs18.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
+  * Use **colony.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
 ```
-blueprint = cs18.blueprint('blueprint_name', ['appname1': 'version', 'appname2': 'version'])
+blueprint = colony.blueprint('blueprint_name', ['appname1': 'version', 'appname2': 'version'])
 ```
   * Use **blueprint.startSandbox** to starts a sandbox and returns a sandbox object which you could stop later.
 ```

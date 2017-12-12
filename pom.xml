@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
-  <artifactId>cs18</artifactId>
+  <artifactId>colony</artifactId>
   <version>1.0.5</version>
   <packaging>hpi</packaging>
 
@@ -21,8 +21,8 @@
     <jenkins-test-harness.version>2.2</jenkins-test-harness.version>
   </properties>
 
-  <name>Jenkins CS18 plugin</name>
-  <description>Integrates Jenkins with CS18</description>
+  <name>Jenkins colony plugin</name>
+  <description>Integrates Jenkins with colony</description>
   <url>http://www.quali.com</url>
 
   <licenses>

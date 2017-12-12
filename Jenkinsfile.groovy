@@ -18,7 +18,7 @@ try {
                 }
                 stage('Checkout') {
                     devops.resetWorkspace(devopsVersion)
-                    dir('cs18') {
+                    dir('colony') {
                         def scmVars = checkout scm
                         devops.logalore(devopsVersion, scmVars)
                         devops.grantFullPermissions('.')
@@ -27,7 +27,7 @@ try {
                 }
 
                 stage('Clean, Package & upload') {
-                    dir('cs18') {
+                    dir('colony') {
                         if( env.BRANCH_NAME.equals('master') ) {
                             echo "in master branch - running maven with clean"
                             devops.runSh('mvn -B clean package')
@@ -42,29 +42,28 @@ try {
                             devops.runSh("echo '${env.BRANCH_NAME}' > branch.txt")
                             devops.runSh('ls')
                             echo "${changeset}"
-                            devops.uploadArtifact("cs18.hpi")
-                            echo "uploadArtifact cs18.hpi"
+                            devops.uploadArtifact("colony.hpi")
+                            echo "uploadArtifact colony.hpi"
                             devops.uploadToS3("branch.txt", "ngdevbox/applications/jenkins/${changeset}")
                             echo "uploadToS3 branch.txt"
-                            devops.uploadToS3("cs18.hpi", "ngdevbox/applications/jenkins/${changeset}")
-                            echo "uploadToS3 cs18.hpi"
+                            devops.uploadToS3("colony.hpi", "ngdevbox/applications/jenkins/${changeset}")
+                            echo "uploadToS3 colony.hpi"
                         }
                     }
                 }
                 stage('Integration test') {
                     def release = [:]
                     release['jenkins'] = changeset
-                    release['cs18-api'] = 'forDexter'
-                    release['cs18-account-ms'] = 'forDexter'
-                    release['cs18-db'] = 'forDexter'
-                    cs18.blueprint("n-ca-jenkins-aws", "TestingJenkinsPlugin", release, 6).doInsideSandbox {
+                    release['colony-api'] = 'forDexter'
+                    release['colony-account-ms'] = 'forDexter'
+                    release['colony-db'] = 'forDexter'
+                    colony.blueprint("n-ca-jenkins-aws", "TestingJenkinsPlugin", release, 6).doInsideSandbox {
                         sandbox_details->
-                            echo "sanbox env: ${env.SANDBOX}"
-                            def sandbox = readJSON text: "${env.SANDBOX}"
+                            echo "sanbox env: $sandbox_details"
                             def url
                             //start job named test1
                             def jobName = "test1"
-                            for (application in sandbox.applications) {
+                            for (application in sandbox_details.applications) {
                                 if (application["name"] == "jenkins") {
                                     url = application["shortcuts"][0]
                                     break
