@@ -57,26 +57,26 @@ try {
                     release['colony-api'] = 'forDexter'
                     release['colony-account-ms'] = 'forDexter'
                     release['colony-db'] = 'forDexter'
-                    colony.blueprint("n-ca-jenkins-aws", "TestingJenkinsPlugin", release, 6).doInsideSandbox {
-                        sandbox_details->
-                            echo "sanbox env: $sandbox_details"
-                            def url
-                            //start job named test1
-                            def jobName = "test1"
-                            for (application in sandbox_details.applications) {
-                                if (application["name"] == "jenkins") {
-                                    url = application["shortcuts"][0]
-                                    break
-                                }
+                    cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox {
+                        echo "sanbox env: ${env.SANDBOX}"
+                        def sandbox = readJSON text: "${env.SANDBOX}"
+                        def url
+                        //start job named test1
+                        def jobName = "test1"
+                        for (application in sandbox.applications) {
+                            if (application["name"] == "jenkins") {
+                                url = application["shortcuts"][0]
+                                break
                             }
-                            echo "url: ${url}"
-                            def innerLog = devops.runJenkinsJob(jobName, url, true)
-                            writeFile file: 'innerLog.txt', text: innerLog
-                            devops.uploadArtifact("innerLog.txt")
+                        }
+                        echo "url: ${url}"
+                        def innerLog = devops.runJenkinsJob(jobName, url, true)
+                        writeFile file: 'innerLog.txt', text: innerLog
+                        devops.uploadArtifact("innerLog.txt")
 
-                            if(innerLog.contains("\"result\":\"FAILURE\"")){
-                                throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
-                            }
+                        if(innerLog.contains("\"result\":\"FAILURE\"")){
+                            throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
+                        }
                     }
                 }
             }
