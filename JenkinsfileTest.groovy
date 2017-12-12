@@ -3,7 +3,7 @@ try {
         timeout(time: 60, unit: 'MINUTES') {
             timestamps {
                 stage('Publish Blueprint') {
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://colony-api.sandbox.com:5050/api/catalog'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/catalog'"
                 }
                 stage('Integration Test') {
                     def release = [:]
