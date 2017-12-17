@@ -59,7 +59,8 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
             final String err = response.errorBody().string();
             return ResponseData.error(response.code(),err).setMessage(message);
         }
-        return ResponseData.ok(response.body(),response.code()).setMessage(message);
+        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(response.body());
+        return ResponseData.ok(response.body(),response.code(), rawBodyJson).setMessage(message);
     }
     private static <T> ResponseData<T> createErrorResponse(Exception e) {
         String errorMessage = e.toString();

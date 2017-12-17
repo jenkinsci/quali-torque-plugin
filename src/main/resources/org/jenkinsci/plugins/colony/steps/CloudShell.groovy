@@ -2,20 +2,24 @@ package org.jenkinsci.plugins.colony.steps
 
 import com.google.gson.Gson
 import groovy.json.JsonSlurper
-import net.sf.json.JSON
 import net.sf.json.JSONObject
+import net.sf.json.JSONSerializer
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class CloudShell implements Serializable {
 
     private CpsScript script
 
-    public CloudShell(CpsScript script) {
+    CloudShell(CpsScript script) {
         this.script = script
     }
 
-    public Blueprint blueprint(String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
+    Blueprint blueprint(String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
         return new Blueprint(this, blueprint, sandboxName, release, timeout)
+    }
+
+    def endSandbox(String sandboxId){
+        script.endSandbox sandboxId
     }
 
     private <V> V node(Closure<V> body) {
@@ -29,7 +33,7 @@ class CloudShell implements Serializable {
         }
     }
 
-    public static class Blueprint implements Serializable {
+    def static class Blueprint implements Serializable {
         public final CloudShell cs
         private final String blueprint
         private final Map<String, String> release
@@ -44,31 +48,28 @@ class CloudShell implements Serializable {
             this.release = release
         }
 
-        public Sandbox startSandbox(){
-            def sandbox
+        Object startSandbox(){
+            def sandboxJSONObject
             cs.node {
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                sandbox = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
-                cs.script.echo("health check done!")
-                def sandboxJson = JSONObject.fromObject(sandbox).toString()
-                cs.script.echo("sandbox under test details:${sandboxJson}")
+                String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                cs.script.echo("health check done! returned:${sandboxString}")
+                sandboxJSONObject = JSONSerializer.toJSON(sandboxString)
             }
-            return new Sandbox(this.cs,sandbox)
+            return sandboxJSONObject
         }
 
-        public <V> V doInsideSandbox(Closure<V> body) {
+        def <V> V doInsideSandbox(Closure<V> body) {
             cs.node {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
                 def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    def sandbox = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
-                    cs.script.echo("health check done!")
-                    def sandboxJson =JSONObject.fromObject(sandbox).toString()
-                    def sandboxJSONObject = new JsonSlurper().parseText(sandboxJson)
-                    cs.script.echo("sandboxJSONObject:${sandboxJSONObject}")
+                    String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                    cs.script.echo("health check done! returned:${sandboxString}")
+                    def sandboxJSONObject = JSONSerializer.toJSON(sandboxString)
                     body.call(sandboxJSONObject)
                 }
                 finally {
@@ -77,22 +78,4 @@ class CloudShell implements Serializable {
             }
         }
     }
-
-    public static class Sandbox implements Serializable {
-        public final CloudShell cs
-        private final org.jenkinsci.plugins.colony.api.SingleSandbox sandbox;
-
-        private Sandbox(CloudShell cs, org.jenkinsci.plugins.colony.api.SingleSandbox sandbox) {
-            this.sandbox = sandbox
-            this.cs = cs
-        }
-        public org.jenkinsci.plugins.colony.api.SingleSandbox getData(){
-            def sandboxJson =JSONObject.fromObject(this.sandbox).toString()
-            return new JsonSlurper().parseText(sandboxJson)
-        }
-        public void end(){
-            cs.script.endSandbox this.sandbox.id
-        }
-    }
-
 }

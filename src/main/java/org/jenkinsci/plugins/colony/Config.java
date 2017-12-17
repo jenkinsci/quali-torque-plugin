@@ -28,8 +28,8 @@ public class Config extends AbstractDescribableImpl<Config> {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static SandboxAPIService CreateSandboxAPIService() throws Exception {
-        return new SandboxAPIServiceMock(); //TODO: change back to real impl
-//        return new SandboxAPIServiceImpl(DESCRIPTOR.getAPIConnection());
+//        return new SandboxAPIServiceMock(); //TODO: change back to real impl
+        return new SandboxAPIServiceImpl(DESCRIPTOR.getAPIConnection());
     }
 
     public static final class DescriptorImpl extends Descriptor<Config> {

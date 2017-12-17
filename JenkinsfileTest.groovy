@@ -9,23 +9,30 @@ try {
                     def release = [:]
                     release["fasty"] = ""
 
-                    echo "testing doInsideSandbox"
-                    colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details->
-                        echo "sandbox_details - from delegate param: $sandbox_details"
-                    }
-
                     echo "testing startSandbox"
-                    def sandbox
+                    def sandbox // for the endSandbox in the finally
                     try {
                         sandbox = colony.blueprint("fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
                         echo "startSandbox - from the enviroment param - sandbox: ${sandbox}"
-                        echo "sandbox.getData():"
-                        echo sandbox.getData()
+                        echo "sandbox.id: " + sandbox.id
+                        echo "sandbox.name: " + sandbox.name
+                        echo "sandbox.blueprint_name: " + sandbox.blueprint_name
+                        echo "sandbox.deployment_status: " + sandbox.deployment_status
+                        for (app in sandbox.applications){
+                            echo "app.name: " + app.name
+                            echo "app.deployment_status: " + app.deployment_status
+                        }
                     }
                     finally {
-                        echo "before sandbox.end()"
-                        sandbox.end()
-                        echo "after sandbox.end()"
+                        echo "colony.endSandbox(sandbox.id)"
+                        colony.endSandbox(sandbox.id)
+//                        echo "ending sandbox: " + sandbox.id
+//                        endSandbox sandbox.id
+                    }
+
+                    echo "testing doInsideSandbox"
+                    colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details->
+                        echo "sandbox_details - from delegate param: $sandbox_details"
                     }
                 }
             }

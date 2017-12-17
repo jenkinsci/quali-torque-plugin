@@ -18,7 +18,7 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
         sandbox.name = "sandbox-"+res.id;
         sandbox.deploymentStatus = SandboxDeploymentStatus.DONE;
         sandboxes.add(sandbox);
-        return ResponseData.ok(res,200);
+        return ResponseData.ok(res,200,null);
     }
 
     @Override
@@ -30,14 +30,14 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
             }
         }
         sandboxes.remove(mach);
-        return ResponseData.ok(null,200);
+        return ResponseData.ok(null,200, null);
     }
 
     @Override
     public ResponseData<Sandbox[]> getSandboxes() throws IOException {
         Sandbox [] sandboxesArr = new Sandbox[sandboxes.size()];
         sandboxesArr = sandboxes.toArray(sandboxesArr);
-        return ResponseData.ok(sandboxesArr,200);
+        return ResponseData.ok(sandboxesArr,200, null);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
                 mach = sandbox;
             }
         }
-        return ResponseData.ok(mach, 200);
+        return ResponseData.ok(mach, 200, null);
     }
 }

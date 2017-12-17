@@ -51,7 +51,7 @@ public class WaitForSandboxStep extends Step {
         return new Execution(stepContext, getSandboxId(), timeout);
     }
 
-    public static class Execution extends SandboxStepExecution<SingleSandbox> {
+    public static class Execution extends SandboxStepExecution<String> {
         private final String sandboxId;
         private Integer timeout;
 
@@ -62,33 +62,33 @@ public class WaitForSandboxStep extends Step {
         }
 
         @Override
-        protected SingleSandbox run() throws Exception {
+        protected String run() throws Exception {
             return waitForSandbox(sandboxId, timeout);
         }
 
-        public SingleSandbox waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
+        public String waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
             {
-                SingleSandbox sandbox = getSandbox(sandboxId);
+                ResponseData<SingleSandbox> sandbox = getSandbox(sandboxId);
                 if(sandbox != null)
                 {
-                    if(waitForSandbox(sandbox))
-                        return sandbox;
+                    if(waitForSandbox(sandbox.getData()))
+                        return sandbox.getRawBodyJson();
                 }
                 Thread.sleep(2000);
             }
             throw new TimeoutException(String.format(Messages.WaitingForSandboxTimeoutError(),timeoutMinutes));
         }
 
-        private SingleSandbox getSandbox(String sandboxId) throws IOException {
+        private ResponseData<SingleSandbox> getSandbox(String sandboxId) throws IOException {
 
             ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
                 throw new AbortException(sandboxByIdRes.getError());
             }
-            return sandboxByIdRes.getData();
+            return sandboxByIdRes;
 
         }
 
