@@ -18,18 +18,23 @@ try {
                         echo "sandbox.name: " + sandbox.name
                         echo "sandbox.blueprint_name: " + sandbox.blueprint_name
                         echo "sandbox.deployment_status: " + sandbox.deployment_status
-                        for (app in sandbox.applications){
+                        for (app in sandbox.applications) {
                             echo "app.name: " + app.name
                             echo "app.deployment_status: " + app.deployment_status
                         }
                     }
+                    catch(Exception ex){
+                        echo ex.toString()
+                        throw ex
+                    }
                     finally {
                         echo "colony.endSandbox(sandbox.id)"
-                        colony.endSandbox(sandbox.id)
+                        if (sandbox != null && sandbox.id != null)
+                            colony.endSandbox(sandbox.id)
                     }
 
                     echo "testing doInsideSandbox"
-                    colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details->
+                    colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details ->
                         echo "doInsideSandbox delegate: $sandbox_details"
                     }
                 }
