@@ -16,7 +16,7 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
         SingleSandbox sandbox = new SingleSandbox();
         sandbox.id = res.id;
         sandbox.name = "sandbox-"+res.id;
-        sandbox.sandboxStatus = SandboxDeploymentStatus.DONE;
+        sandbox.sandboxStatus = SandboxStatus.ACTIVE;
         sandboxes.add(sandbox);
         return ResponseData.ok(res,200,null);
     }

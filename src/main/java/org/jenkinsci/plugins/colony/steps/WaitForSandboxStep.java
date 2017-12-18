@@ -93,18 +93,16 @@ public class WaitForSandboxStep extends Step {
         }
 
         private boolean waitForSandbox(SingleSandbox sandbox) throws IOException {
-            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.PREPARING) ||
-                    sandbox.sandboxStatus.equals(SandboxDeploymentStatus.DEPLOYING))
+            if(sandbox.sandboxStatus.equals(SandboxStatus.LAUNCHING))
                 return false;
-            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.DONE))
+            if(sandbox.sandboxStatus.equals(SandboxStatus.ACTIVE))
                 return true;
-            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.ERROR) ||
-                    sandbox.sandboxStatus.equals(SandboxDeploymentStatus.ABORTED)) {
+            if(sandbox.sandboxStatus.equals(SandboxStatus.ACTIVE_WITH_ERROR)) {
                 String app_statuses_str = formatAppsDeploymentStatuses(sandbox);
                 throw new AbortException(Messages.SandboxDeploymentFailedError(sandbox.sandboxStatus, app_statuses_str));
             }
 
-            throw new AbortException(Messages.UnknownSandboxDeploymentStatusError(sandbox.id, sandbox.sandboxStatus));
+            throw new AbortException(Messages.UnknownSandboxStatusError(sandbox.id, sandbox.sandboxStatus));
         }
 
         private String formatAppsDeploymentStatuses(SingleSandbox sandbox)throws IOException{
