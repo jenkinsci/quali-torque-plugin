@@ -13,7 +13,7 @@ try {
                     def sandbox // for the endSandbox in the finally
                     try {
                         sandbox = colony.blueprint("fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
-                        echo "startSandbox - from the enviroment param - sandbox: ${sandbox}"
+                        echo "startSandbox returned: ${sandbox}"
                         echo "sandbox.id: " + sandbox.id
                         echo "sandbox.name: " + sandbox.name
                         echo "sandbox.blueprint_name: " + sandbox.blueprint_name
@@ -26,13 +26,11 @@ try {
                     finally {
                         echo "colony.endSandbox(sandbox.id)"
                         colony.endSandbox(sandbox.id)
-//                        echo "ending sandbox: " + sandbox.id
-//                        endSandbox sandbox.id
                     }
 
                     echo "testing doInsideSandbox"
                     colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details->
-                        echo "sandbox_details - from delegate param: $sandbox_details"
+                        echo "doInsideSandbox delegate: $sandbox_details"
                     }
                 }
             }
