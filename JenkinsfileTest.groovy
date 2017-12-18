@@ -17,10 +17,10 @@ try {
                         echo "sandbox.id: " + sandbox.id
                         echo "sandbox.name: " + sandbox.name
                         echo "sandbox.blueprint_name: " + sandbox.blueprint_name
-                        echo "sandbox.deployment_status: " + sandbox.deployment_status
+                        echo "sandbox.sandbox_status: " + sandbox.sandbox_status
                         for (app in sandbox.applications) {
                             echo "app.name: " + app.name
-                            echo "app.deployment_status: " + app.deployment_status
+                            echo "app.sandbox_status: " + app.sandbox_status
                         }
                     }
                     catch(Exception ex){

@@ -5,28 +5,46 @@
         The <code>colony</code> variable offers convenient access to colony-related functions from a Pipeline script.
     </p>
     <dl>
-        <dt><code>blueprint(name, release)</code></dt>
+        <dt><code>colony.blueprint(name, sandboxName, release, timeout)</code></dt>
         <dd>
             <p>
-                Creates a blueprint object with a specified name.
+                Creates a blueprint from the specified name with a specified name, release and timeout.
+                this blueprint object has the following methods:
+                startSandbox, doInsideSandbox, endSandbox
             </p>
         </dd>
-        <dt><code>Blueprint.startSandbox()</code></dt>
+        <dt><code>sandbox = colony.blueprint(name, sandboxName, release, timeout).startSandbox()</code></dt>
         <dd>
             <p>
-                Starts a sandbox from blueprint and returns a <code>Sandbox</code> which you could stop later.
+                Starts a sandbox from blueprint created and returns <code>sandbox</code> json details.
             </p>
         </dd>
-        <dt><code>Blueprint.doInsideSandbox</code></dt>
+        <dt><code>colony.blueprint(name, sandboxName, release, timeout).doInsideSandbox{sandbox -> ...}</code></dt>
         <dd>
             <p>
-                Starts a sandbox for the duration of the body
+                Starts a sandbox and runs the delegate passing it the sandbox json details.
+                when the scope of the delegate is done, ends the sandbox.
             </p>
         </dd>
-        <dt><code>Sandbox.end()</code></dt>
+        <dt><code>colony.endSandbox(sandbox.id)</code></dt>
         <dd>
             <p>
-                End the sandbox
+                ends the sandbox.
+            </p>
+        </dd>
+        <dt>Sample pipeline in groovy</dt>
+        <dd>
+            <p>
+                sandbox = colony.blueprint("BLUEPRINT_NAME", "SANDBOX_NAME", ArtifactDictionary, 5).startSandbox()
+                echo "startSandbox returned: ${sandbox}"
+                echo "sandbox.id: " + sandbox.id
+                echo "sandbox.name: " + sandbox.name
+                echo "sandbox.blueprint_name: " + sandbox.blueprint_name
+                echo "sandbox.sandbox_status: " + sandbox.sandbox_status
+                for (app in sandbox.applications) {
+                    echo "app.name: " + app.name
+                    echo "app.sandbox_status: " + app.sandbox_status
+                }
             </p>
         </dd>
     </dl>

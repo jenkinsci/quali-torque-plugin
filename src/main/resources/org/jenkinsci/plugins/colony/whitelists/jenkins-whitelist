@@ -1,7 +1,5 @@
 #colony jenkins plugin
 
-method org.jenkinsci.plugins.colony.steps.Sandbox.getData java.lang.String
-
 #field org.jenkinsci.plugins.colony.api.SingleSandbox id
 #staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.lang.Object java.lang.String
 
