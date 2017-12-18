@@ -15,6 +15,6 @@ public class SingleSandbox implements Serializable
     public String blueprint_name;
     @SerializedName("applications")
     public List<Service> applications;
-    @SerializedName("deployment_status")
-    public String deploymentStatus;
+    @SerializedName("sandbox_status")
+    public String sandboxStatus;
 }

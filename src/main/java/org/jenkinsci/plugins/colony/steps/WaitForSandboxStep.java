@@ -93,18 +93,18 @@ public class WaitForSandboxStep extends Step {
         }
 
         private boolean waitForSandbox(SingleSandbox sandbox) throws IOException {
-            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.PREPARING) ||
-                    sandbox.deploymentStatus.equals(SandboxDeploymentStatus.DEPLOYING))
+            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.PREPARING) ||
+                    sandbox.sandboxStatus.equals(SandboxDeploymentStatus.DEPLOYING))
                 return false;
-            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.DONE))
+            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.DONE))
                 return true;
-            if(sandbox.deploymentStatus.equals(SandboxDeploymentStatus.ERROR) ||
-                    sandbox.deploymentStatus.equals(SandboxDeploymentStatus.ABORTED)) {
+            if(sandbox.sandboxStatus.equals(SandboxDeploymentStatus.ERROR) ||
+                    sandbox.sandboxStatus.equals(SandboxDeploymentStatus.ABORTED)) {
                 String app_statuses_str = formatAppsDeploymentStatuses(sandbox);
-                throw new AbortException(Messages.SandboxDeploymentFailedError(sandbox.deploymentStatus, app_statuses_str));
+                throw new AbortException(Messages.SandboxDeploymentFailedError(sandbox.sandboxStatus, app_statuses_str));
             }
 
-            throw new AbortException(Messages.UnknownSandboxDeploymentStatusError(sandbox.id, sandbox.deploymentStatus));
+            throw new AbortException(Messages.UnknownSandboxDeploymentStatusError(sandbox.id, sandbox.sandboxStatus));
         }
 
         private String formatAppsDeploymentStatuses(SingleSandbox sandbox)throws IOException{

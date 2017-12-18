@@ -15,7 +15,7 @@ public class Sandbox implements Serializable
     public String blueprint;
     @SerializedName("services")
     public List<Service> services;
-    @SerializedName("deployment_status")
-    public String deploymentStatus;
+    @SerializedName("sandbox_status")
+    public String sandboxStatus;
 }
 
