@@ -1,5 +1,6 @@
 #colony jenkins plugin
 
-#field org.jenkinsci.plugins.colony.api.SingleSandbox id
-#staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.lang.Object java.lang.String
+method net.sf.json.JSON toString
+method net.sf.json.JSON toString int
+method net.sf.json.JSON toString int int
 
