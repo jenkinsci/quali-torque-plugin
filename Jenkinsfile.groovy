@@ -57,7 +57,7 @@ try {
                     release['cs18-api'] = 'forDexter'
                     release['cs18-account-ms'] = 'forDexter'
                     release['cs18-db'] = 'forDexter'
-                    cs18.blueprint("n-ca-jenkins-aws", release).doInsideSandbox { sandbox ->
+                    colony.blueprint("n-ca-jenkins-aws", release).doInsideSandbox { sandbox ->
                         echo "sandbox env: " + sandbox.toString()
 
                         def url
