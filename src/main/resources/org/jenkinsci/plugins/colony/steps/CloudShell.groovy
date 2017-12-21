@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.colony.steps
 
 import com.google.gson.Gson
+import net.sf.json.JSONObject
 import net.sf.json.JSONSerializer
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
@@ -53,7 +54,7 @@ class CloudShell implements Serializable {
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                 String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
                 cs.script.echo("health check done! returned:${sandboxString}")
-                sandboxJSONObject = JSONSerializer.toJSON(sandboxString)
+                sandboxJSONObject = new JSONObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
             }
             return sandboxJSONObject
         }
@@ -67,7 +68,7 @@ class CloudShell implements Serializable {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                     String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
-                    def sandboxJSONObject = JSONSerializer.toJSON(sandboxString)
+                    def sandboxJSONObject = new JSONObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                     body.call(sandboxJSONObject)
                 }
                 finally {
