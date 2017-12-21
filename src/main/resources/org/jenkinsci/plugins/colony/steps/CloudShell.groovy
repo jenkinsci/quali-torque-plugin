@@ -1,8 +1,6 @@
 package org.jenkinsci.plugins.colony.steps
 
 import com.google.gson.Gson
-import groovy.json.JsonSlurper
-import net.sf.json.JSONObject
 import net.sf.json.JSONSerializer
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 

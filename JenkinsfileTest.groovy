@@ -14,19 +14,7 @@ try {
                                 def sandbox // for the endSandbox in the finally
                                 try {
                                     sandbox = colony.blueprint("fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
-                                    echo "startSandbox returned: ${sandbox}"
-                                    echo "sandbox.id: " + sandbox.id
-                                    echo "sandbox.name: " + sandbox.name
-                                    echo "sandbox.blueprint_name: " + sandbox.blueprint_name
-                                    echo "sandbox.sandbox_status: " + sandbox.sandbox_status
-                                    for (app in sandbox.applications) {
-                                        echo "app.name: " + app.name
-                                        echo "app.sandbox_status: " + app.sandbox_status
-                                    }
-
-                                    echo "sandbox[\"applications\"]" + sandbox["applications"]
-                                    echo "sandbox[\"applications\"].name" + sandbox["applications"].name
-                                    echo "sandbox[\"applications\"][\"name\"]" + sandbox["applications"]["name"]
+                                    printSandbox(sandbox)
                                 }
                                 catch (Exception ex) {
                                     echo ex.toString()
@@ -41,7 +29,7 @@ try {
                             "testing doInsideSandbox": {
                                 colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details ->
                                     echo "doInsideSandbox delegate: $sandbox_details"
-                                    echo "doInsideSandbox delegate: $sandbox_details.toString()"
+                                    printSandbox(sandbox_details)
                                 }
                             })
                 }
@@ -51,4 +39,21 @@ try {
 }
 catch (Exception ex) {
     throw ex
+}
+
+def printSandbox(sandbox){
+    echo "sandbox.id: " + sandbox.id
+    echo "sandbox.name: " + sandbox.name
+    echo "sandbox.blueprint_name: " + sandbox.blueprint_name
+    echo "sandbox.sandbox_status: " + sandbox.sandbox_status
+    for (app in sandbox.applications) {
+        echo "app.name: " + app.name
+        echo "app.deployment_status: " + app.deployment_status
+    }
+
+    echo "sandbox[\"applications\"] :" + sandbox["applications"]
+    echo "sandbox[\"applications\"][0].name :" + sandbox["applications"][0].name
+    echo "sandbox[\"applications\"][0].name :" + sandbox["applications"][0].deployment_status
+    echo "sandbox[\"applications\"][0][\"name\"] :" + sandbox["applications"][0]["name"]
+    echo "sandbox[\"applications\"][0][\"deployment_status\"] :" + sandbox["applications"][0]["deployment_status"]
 }
