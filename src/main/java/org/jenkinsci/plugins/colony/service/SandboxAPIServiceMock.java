@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.colony.service;
 
+import com.google.gson.GsonBuilder;
 import org.jenkinsci.plugins.colony.api.*;
 
 import java.io.IOException;
@@ -18,7 +19,8 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
         sandbox.name = "sandbox-"+res.id;
         sandbox.sandboxStatus = SandboxStatus.ACTIVE;
         sandboxes.add(sandbox);
-        return ResponseData.ok(res,200,null);
+        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(res);
+        return ResponseData.ok(res,200, rawBodyJson);
     }
 
     @Override
@@ -37,7 +39,8 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
     public ResponseData<Sandbox[]> getSandboxes() throws IOException {
         Sandbox [] sandboxesArr = new Sandbox[sandboxes.size()];
         sandboxesArr = sandboxes.toArray(sandboxesArr);
-        return ResponseData.ok(sandboxesArr,200, null);
+        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(sandboxesArr);
+        return ResponseData.ok(sandboxesArr,200, rawBodyJson);
     }
 
     @Override
@@ -48,6 +51,7 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
                 mach = sandbox;
             }
         }
-        return ResponseData.ok(mach, 200, null);
+        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(mach);
+        return ResponseData.ok(mach, 200, rawBodyJson);
     }
 }
