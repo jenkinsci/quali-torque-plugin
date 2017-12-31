@@ -113,7 +113,7 @@ public class WaitForSandboxStep extends Step {
                     isFirst= false;
                 else
                     builder.append(", ");
-                builder.append(String.format("%s: %s", service.name, service.deploymentStatus));
+                builder.append(String.format("%s: %s", service.name, service.status));
             }
             return builder.toString();
         }
