@@ -5,7 +5,7 @@ import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.colony.Messages;
+import org.jenkinsci.plugins.cs18.Messages;
 import org.jenkinsci.plugins.colony.PluginConstants;
 import org.jenkinsci.plugins.colony.PluginHelpers;
 import org.jenkinsci.plugins.colony.SandboxStepExecution;
@@ -27,13 +27,15 @@ import java.util.Set;
  */
 public class StartSandboxStep extends Step {
 
+    private final String spaceName;
     private final String blueprint;
     private String sandboxName;
     private Map<String, String> release;
 
     @DataBoundConstructor
-    public StartSandboxStep(@Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release)
+    public StartSandboxStep(@Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release)
     {
+        this.spaceName = spaceName;
         this.blueprint = blueprint;
         this.sandboxName = sandboxName;
         this.release = release;
@@ -41,16 +43,18 @@ public class StartSandboxStep extends Step {
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, blueprint, sandboxName, release);
+        return new Execution(stepContext, this.spaceName, this.blueprint, this.sandboxName, this.release);
     }
 
     public static class Execution extends SandboxStepExecution<String> {
+        private final String spaceName;
         private final String sandboxName;
         private final String blueprint;
         private final Map<String, String> release;
 
-        protected Execution(@Nonnull StepContext context, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release) throws Exception {
+        protected Execution(@Nonnull StepContext context, @Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release) throws Exception {
             super(context);
+            this.spaceName = spaceName;
             this.sandboxName = sandboxName;
             this.blueprint = blueprint;
             this.release = release;
@@ -62,8 +66,8 @@ public class StartSandboxStep extends Step {
             assert taskListener != null;
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
             String sandboxName = this.sandboxName.isEmpty()? PluginHelpers.GenerateSandboxName():this.sandboxName;
-            CreateSandboxRequest req = new CreateSandboxRequest(blueprint, sandboxName, release,true);
-            ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(req);
+            CreateSandboxRequest req = new CreateSandboxRequest(this.blueprint, sandboxName, this.release,true);
+            ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(this.spaceName, req);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
 

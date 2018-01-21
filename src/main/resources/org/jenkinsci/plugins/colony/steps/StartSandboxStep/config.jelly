@@ -25,6 +25,9 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry field="spaceName" title="Space name">
+        <f:textbox />
+    </f:entry>
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>

@@ -7,8 +7,7 @@ import java.util.concurrent.TimeoutException;
 
 public interface SandboxAPIService
 {
-    ResponseData<CreateSandboxResponse> createSandbox(final CreateSandboxRequest req) throws IOException;
-    ResponseData<Void> deleteSandbox(String sandboxId) throws IOException;
-    ResponseData<Sandbox[]> getSandboxes() throws IOException;
-    ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws IOException;
+    ResponseData<CreateSandboxResponse> createSandbox(String spaceName, final CreateSandboxRequest req) throws IOException;
+    ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException;
+    ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws IOException;
 }

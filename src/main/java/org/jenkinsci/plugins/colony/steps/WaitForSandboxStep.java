@@ -26,12 +26,14 @@ import java.util.concurrent.TimeoutException;
  */
 public class WaitForSandboxStep extends Step {
 
+    private String spaceName;
     private String sandboxId;
     private Integer timeout;
 
     @DataBoundConstructor
-    public WaitForSandboxStep(@Nonnull String sandboxId, @Nonnull Integer timeout)
+    public WaitForSandboxStep(@Nonnull String spaceName, @Nonnull String sandboxId, @Nonnull Integer timeout)
     {
+        this.spaceName = spaceName;
         this.sandboxId = sandboxId;
         this.timeout = timeout;
     }
@@ -46,32 +48,44 @@ public class WaitForSandboxStep extends Step {
     }
 
 
+    @DataBoundSetter
+    public void setSpaceName(String spaceName) {
+        this.spaceName = spaceName;
+    }
+
+    public String getSpaceName() {
+        return this.spaceName;
+    }
+
+
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, getSandboxId(), timeout);
+        return new Execution(stepContext, getSpaceName(), getSandboxId(), timeout);
     }
 
     public static class Execution extends SandboxStepExecution<String> {
+        private final String spaceName;
         private final String sandboxId;
         private Integer timeout;
 
-        protected Execution(@Nonnull StepContext context, String sandboxId, Integer timeout) throws Exception {
+        protected Execution(@Nonnull StepContext context, String spaceName, String sandboxId, Integer timeout) throws Exception {
             super(context);
+            this.spaceName = spaceName;
             this.sandboxId = sandboxId;
             this.timeout = timeout;
         }
 
         @Override
         protected String run() throws Exception {
-            return waitForSandbox(sandboxId, timeout);
+            return waitForSandbox(this.spaceName, this.sandboxId, timeout);
         }
 
-        public String waitForSandbox(String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
+        public String waitForSandbox(String spaceName, String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
             {
-                ResponseData<SingleSandbox> sandbox = getSandbox(sandboxId);
+                ResponseData<SingleSandbox> sandbox = getSandbox(spaceName, sandboxId);
                 if(sandbox != null)
                 {
                     if(waitForSandbox(sandbox.getData()))
@@ -82,9 +96,9 @@ public class WaitForSandboxStep extends Step {
             throw new TimeoutException(String.format(Messages.WaitingForSandboxTimeoutError(),timeoutMinutes));
         }
 
-        private ResponseData<SingleSandbox> getSandbox(String sandboxId) throws IOException {
+        private ResponseData<SingleSandbox> getSandbox(String spaceName, String sandboxId) throws IOException {
 
-            ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(sandboxId);
+            ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
                 throw new AbortException(sandboxByIdRes.getError());
             }

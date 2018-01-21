@@ -11,7 +11,7 @@ import java.util.UUID;
 public class SandboxAPIServiceMock implements SandboxAPIService{
     private static List<SingleSandbox> sandboxes = new ArrayList<SingleSandbox>();
     @Override
-    public ResponseData<CreateSandboxResponse> createSandbox(CreateSandboxRequest req) throws IOException {
+    public ResponseData<CreateSandboxResponse> createSandbox(String spaceName, CreateSandboxRequest req) throws IOException {
         CreateSandboxResponse res = new CreateSandboxResponse();
         res.id= UUID.randomUUID().toString();
         SingleSandbox sandbox = new SingleSandbox();
@@ -24,7 +24,7 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
     }
 
     @Override
-    public ResponseData<Void> deleteSandbox(String sandboxId) throws IOException {
+    public ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException {
         SingleSandbox mach = null;
         for(SingleSandbox sandbox: sandboxes){
             if(sandbox.id == sandboxId){
@@ -36,15 +36,7 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
     }
 
     @Override
-    public ResponseData<Sandbox[]> getSandboxes() throws IOException {
-        Sandbox [] sandboxesArr = new Sandbox[sandboxes.size()];
-        sandboxesArr = sandboxes.toArray(sandboxesArr);
-        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(sandboxesArr);
-        return ResponseData.ok(sandboxesArr,200, rawBodyJson);
-    }
-
-    @Override
-    public ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws IOException {
+    public ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws IOException {
         SingleSandbox mach = null;
         for(SingleSandbox sandbox: sandboxes){
             if(sandbox.id == sandboxId){
