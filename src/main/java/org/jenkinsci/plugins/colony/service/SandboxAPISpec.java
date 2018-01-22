@@ -11,17 +11,17 @@ import retrofit2.http.*;
  */
 public interface SandboxAPISpec {
 
-    @POST("api/spaces/{spaceName}/sandboxes")
+    @POST("api/spaces/{spaceName}/sandbox")
     Call<CreateSandboxResponse> createSandbox(@Header("Authorization") String token,
                                               @Path("spaceName") String spaceName,
                                               @Body CreateSandboxRequest request);
 
-    @DELETE("api/spaces/{spaceName}/sandboxes/{sandboxId}")
+    @DELETE("api/spaces/{spaceName}/sandbox/{sandboxId}")
     Call<Void> deleteSandbox(@Header("Authorization") String token,
                              @Path("spaceName") String spaceName,
                              @Path("sandboxId") String sandboxId);
 
-    @GET("api/spaces/{spaceName}/sandboxes/{sandboxId}")
+    @GET("api/spaces/{spaceName}/sandbox/{sandboxId}")
     Call<SingleSandbox> getSandboxById(@Header("Authorization") String token,
                                        @Path("spaceName") String spaceName,
                                        @Path("sandboxId") String sandboxId);

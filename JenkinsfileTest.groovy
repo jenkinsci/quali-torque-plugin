@@ -1,9 +1,19 @@
 try {
     node('master') {
         timeout(time: 60, unit: 'MINUTES') {
+            def longToken
             timestamps {
+                stage('Create and authorize account'){
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"account_name\": \"demo\", \"first_name\": \"demo\", \"last_name\": \"demo\", \"email\": \"demo@demo.com\", \"password\": \"demo\", \"phone_number\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/register'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
+                    def loggedInAccount = readJSON file: 'logged_in_account'
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header 'Authorization: ${loggedInAccount['token_type']} ${loggedInAccount['access_token']}' -d '{\"\"}' 'http://cs18-api.sandbox.com:5050/api/token/longtoken' > long_token_response"
+                    def longTokenAccount = readJSON file: 'long_token_response'
+                    longToken = longTokenAccount['access_token']
+
+                }
                 stage('Publish Blueprint') {
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/catalog'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header 'Authorization: Bearer ${longToken}' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
                 }
                 stage('Integration Test') {
                     def release = [:]
@@ -13,7 +23,7 @@ try {
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
+                                    sandbox = colony.blueprint("demo trial","fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
@@ -23,14 +33,14 @@ try {
                                 finally {
                                     echo "colony.endSandbox(sandbox.id)"
                                     if (sandbox != null && sandbox.id != null)
-                                        colony.endSandbox(sandbox.id)
+                                        colony.endSandbox("demo trial", sandbox.id)
                                 }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details ->
+                                colony.blueprint("demo trial", "fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details ->
                                     printSandbox(sandbox_details, "doInsideSandbox")
-                                }
-                            })
+                            }
+                    })
                 }
             }
         }
@@ -63,3 +73,4 @@ def printSandbox(sandbox, name){
     echo "sandbox[\"applications\"][0][\"deployment_status\"] :" + sandbox["applications"][0]["deployment_status"]
     echo "end:" + name
 }
+

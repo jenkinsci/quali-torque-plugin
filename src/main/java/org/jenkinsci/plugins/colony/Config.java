@@ -7,7 +7,6 @@ import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.colony.service.SandboxAPIService;
 import org.jenkinsci.plugins.colony.service.SandboxAPIServiceImpl;
 import org.jenkinsci.plugins.colony.service.SandboxServiceConnection;
-import org.jenkinsci.plugins.cs18.Messages;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**

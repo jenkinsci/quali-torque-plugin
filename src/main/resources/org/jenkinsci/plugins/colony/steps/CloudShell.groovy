@@ -53,7 +53,7 @@ class CloudShell implements Serializable {
             cs.node {
                 def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
                 cs.script.echo("health check done! returned:${sandboxString}")
                 sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
             }
@@ -64,10 +64,11 @@ class CloudShell implements Serializable {
             cs.node {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
+                cs.script.echo(spaceName)
                 def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                    String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     def sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                     body.call(sandboxJSONObject)

@@ -13,7 +13,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.jenkinsci.plugins.cs18.Messages;
+import org.jenkinsci.plugins.colony.Messages;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
