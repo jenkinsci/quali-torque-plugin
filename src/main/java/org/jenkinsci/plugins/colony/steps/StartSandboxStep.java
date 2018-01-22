@@ -5,7 +5,7 @@ import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.cs18.Messages;
+import org.jenkinsci.plugins.colony.Messages;
 import org.jenkinsci.plugins.colony.PluginConstants;
 import org.jenkinsci.plugins.colony.PluginHelpers;
 import org.jenkinsci.plugins.colony.SandboxStepExecution;
