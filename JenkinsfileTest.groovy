@@ -10,7 +10,6 @@ try {
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header 'Authorization: ${loggedInAccount['token_type']} ${loggedInAccount['access_token']}' -d '{\"\"}' 'http://cs18-api.sandbox.com:5050/api/token/longtoken' > long_token_response"
                     def longTokenAccount = readJSON file: 'long_token_response'
                     longToken = longTokenAccount['access_token']
-                    echo longToken
                 }
                 stage('Publish Blueprint') {
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header 'Authorization: Bearer ${longToken}' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
