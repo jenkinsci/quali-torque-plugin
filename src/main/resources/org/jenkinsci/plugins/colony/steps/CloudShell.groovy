@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.colony.steps
 
 import com.google.gson.Gson
 import net.sf.json.JSONObject
-import net.sf.json.JSONSerializer
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
 class CloudShell implements Serializable {
@@ -13,12 +12,12 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    Blueprint blueprint(String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
-        return new Blueprint(this, blueprint, sandboxName, release, timeout)
+    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
+        return new Blueprint(this, spaceName, blueprint, sandboxName, release, timeout)
     }
 
-    def endSandbox(String sandboxId){
-        script.endSandbox sandboxId
+    def endSandbox(String spaceName, String sandboxId){
+        script.endSandbox(spaceName:spaceName, sandboxId:sandboxId)
     }
 
     private <V> V node(Closure<V> body) {
@@ -38,8 +37,10 @@ class CloudShell implements Serializable {
         private final Map<String, String> release
         private String sandboxName
         private int timeout
+        private String spaceName
 
-        private Blueprint(CloudShell cs, String blueprint, String sandboxName, Map<String, String> release, Integer timeout) {
+        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> release, Integer timeout) {
+            this.spaceName = spaceName
             this.timeout = timeout
             this.sandboxName = sandboxName
             this.blueprint = blueprint
@@ -50,9 +51,9 @@ class CloudShell implements Serializable {
         Object startSandbox(){
             def sandboxJSONObject
             cs.node {
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
+                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
                 cs.script.echo("health check done! returned:${sandboxString}")
                 sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
             }
@@ -63,16 +64,17 @@ class CloudShell implements Serializable {
             cs.node {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
-                def sandboxId = cs.script.startSandbox(blueprint: blueprint, sandboxName:sandboxName, release: release)
+                cs.script.echo(spaceName)
+                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    String sandboxString = cs.script.waitForSandbox(sandboxId: sandboxId, timeout: timeout)
+                    String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     def sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                     body.call(sandboxJSONObject)
                 }
                 finally {
-                    cs.script.endSandbox sandboxId
+                    cs.script.endSandbox(spaceName:spaceName, sandboxId:sandboxId)
                 }
             }
         }

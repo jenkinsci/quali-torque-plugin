@@ -13,8 +13,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class SandboxAPIServiceImpl implements SandboxAPIService{
-    private SandboxAPISpec sandboxAPI = null;
+    private SandboxAPISpec sandboxAPI;
+    private SandboxServiceConnection connection;
     public SandboxAPIServiceImpl(SandboxServiceConnection connection) {
+        this.connection = connection;
+
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -35,22 +38,16 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
         sandboxAPI = retrofit.create(SandboxAPISpec.class);
     }
 
-    public ResponseData<Sandbox []> getSandboxes() throws RuntimeException, IOException {
-        return execute(sandboxAPI.getSandboxes());
+    public ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws RuntimeException, IOException {
+        return execute(sandboxAPI.getSandboxById(this.connection.token, spaceName, sandboxId));
     }
 
-    @Override
-    public ResponseData<SingleSandbox> getSandboxById(String sandboxId) throws RuntimeException, IOException {
-        return execute(sandboxAPI.getSandboxById(sandboxId));
+    public ResponseData<CreateSandboxResponse> createSandbox(String spaceName, final CreateSandboxRequest req) throws IOException {
+        return execute(sandboxAPI.createSandbox(this.connection.token, spaceName, req));
     }
 
-
-    public ResponseData<CreateSandboxResponse> createSandbox(final CreateSandboxRequest req) throws IOException {
-        return execute(sandboxAPI.createSandbox(req));
-    }
-
-    public ResponseData<Void> deleteSandbox(String sandboxId) throws IOException {
-        return execute(sandboxAPI.deleteSandbox(sandboxId));
+    public ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException {
+        return execute(sandboxAPI.deleteSandbox(this.connection.token, spaceName, sandboxId));
     }
 
     private static <T> ResponseData<T> parseResponse(final Response<T> response) throws IOException {

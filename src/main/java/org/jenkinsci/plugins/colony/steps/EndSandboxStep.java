@@ -5,7 +5,6 @@ import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import org.jenkinsci.plugins.colony.Messages;
 import org.jenkinsci.plugins.colony.PluginConstants;
 import org.jenkinsci.plugins.colony.SandboxStepExecution;
 import org.jenkinsci.plugins.colony.api.ResponseData;
@@ -14,6 +13,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.plugins.colony.Messages;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -23,26 +23,35 @@ import java.util.Set;
  */
 public class EndSandboxStep extends Step{
     private final String sandboxId;
+    private final String spaceName;
 
     public String getSandboxId() {
         return sandboxId;
     }
 
+    public String getSpaceName() {
+        return spaceName;
+    }
+
+
     @DataBoundConstructor
-    public EndSandboxStep(@Nonnull String sandboxId)
+    public EndSandboxStep(@Nonnull String spaceName, @Nonnull String sandboxId)
     {
         this.sandboxId= sandboxId;
+        this.spaceName= spaceName;
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, this.sandboxId);
+        return new Execution(stepContext, this.spaceName, this.sandboxId);
     }
 
     public static class Execution extends SandboxStepExecution<Void> {
+        private final String spaceName;
         private final String sandboxId;
-        protected Execution(@Nonnull StepContext context, String sandboxId) throws Exception {
+        protected Execution(@Nonnull StepContext context, String spaceName, String sandboxId) throws Exception {
             super(context);
+            this.spaceName = spaceName;
             this.sandboxId = sandboxId;
         }
 
@@ -50,7 +59,7 @@ public class EndSandboxStep extends Step{
         protected Void run() throws Exception {
             TaskListener taskListener = getContext().get(TaskListener.class);
             taskListener.getLogger().println(String.format(Messages.EndSandbox_EndingMsg(sandboxId)));
-            ResponseData<Void> res = sandboxAPIService.deleteSandbox(sandboxId);
+            ResponseData<Void> res = sandboxAPIService.deleteSandbox(this.spaceName, this.sandboxId);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
             return null;
