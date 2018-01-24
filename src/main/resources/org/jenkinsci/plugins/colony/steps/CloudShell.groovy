@@ -67,7 +67,7 @@ class CloudShell implements Serializable {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
                 cs.script.echo(spaceName)
-                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
+                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release, inputs: inputs)
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                     String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
