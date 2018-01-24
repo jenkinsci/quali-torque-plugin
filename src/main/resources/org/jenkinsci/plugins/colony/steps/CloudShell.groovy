@@ -12,8 +12,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Integer timeout){
-        return new Blueprint(this, spaceName, blueprint, sandboxName, release, timeout)
+    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Map<String, String> inputs, Integer timeout){
+        return new Blueprint(this, spaceName, blueprint, sandboxName, release,inputs, timeout)
     }
 
     def endSandbox(String spaceName, String sandboxId){
@@ -35,23 +35,25 @@ class CloudShell implements Serializable {
         public final CloudShell cs
         private final String blueprint
         private final Map<String, String> release
+        private final Map<String, String> inputs
         private String sandboxName
         private int timeout
         private String spaceName
 
-        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> release, Integer timeout) {
+        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> release,Map<String, String> inputs, Integer timeout) {
             this.spaceName = spaceName
             this.timeout = timeout
             this.sandboxName = sandboxName
             this.blueprint = blueprint
             this.cs = cs
             this.release = release
+            this.inputs = inputs
         }
 
         Object startSandbox(){
             def sandboxJSONObject
             cs.node {
-                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release)
+                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release, inputs: inputs)
                 cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                 String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
                 cs.script.echo("health check done! returned:${sandboxString}")
