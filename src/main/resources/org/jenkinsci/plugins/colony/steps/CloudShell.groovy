@@ -12,8 +12,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Map<String, String> inputs, Integer timeout){
-        return new Blueprint(this, spaceName, blueprint, sandboxName, release,inputs, timeout)
+    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Integer timeout, Map<String, String> inputs = [:]){
+        return new Blueprint(this, spaceName, blueprint, sandboxName, release, timeout,inputs)
     }
 
     def endSandbox(String spaceName, String sandboxId){
@@ -40,7 +40,7 @@ class CloudShell implements Serializable {
         private int timeout
         private String spaceName
 
-        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> release,Map<String, String> inputs, Integer timeout) {
+        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> release, Integer timeout, Map<String, String> inputs = [:]) {
             this.spaceName = spaceName
             this.timeout = timeout
             this.sandboxName = sandboxName
