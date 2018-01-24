@@ -6,13 +6,8 @@ import hudson.model.Descriptor;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.colony.service.SandboxAPIService;
 import org.jenkinsci.plugins.colony.service.SandboxAPIServiceImpl;
-import org.jenkinsci.plugins.colony.service.SandboxAPIServiceMock;
 import org.jenkinsci.plugins.colony.service.SandboxServiceConnection;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.ProxyWhitelist;
-import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.StaticWhitelist;
 import org.kohsuke.stapler.StaplerRequest;
-
-import java.io.IOException;
 
 /**
  * Created by shay-k on 20/06/2017.
@@ -43,7 +38,10 @@ public class Config extends AbstractDescribableImpl<Config> {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException
         {
-            apiConnection = new SandboxServiceConnection(json.getString("address"),json.getInt("port"), 10, 30);
+            String address = json.getString("address");
+            int port = json.getInt("port");
+            String token = json.getString("token");
+            apiConnection = new SandboxServiceConnection(address, port, token,10, 30);
             save();
             return super.configure(req,json);
         }
@@ -62,6 +60,10 @@ public class Config extends AbstractDescribableImpl<Config> {
 
         public int getPort() {
             return apiConnection.port;
+        }
+
+        public String getToken() {
+            return apiConnection.token;
         }
     }
 }

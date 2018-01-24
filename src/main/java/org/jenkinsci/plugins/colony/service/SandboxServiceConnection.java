@@ -6,11 +6,13 @@ package org.jenkinsci.plugins.colony.service;
 public class SandboxServiceConnection {
     public final String address;
     public final int port;
+    public final String token;
     public final int connectionTimeoutSec;
     public final int readTimeoutSec;
-    public SandboxServiceConnection(String serverAddress, int port, int connectionTimeoutSec, int readTimeoutSec){
+    public SandboxServiceConnection(String serverAddress, int port, String token, int connectionTimeoutSec, int readTimeoutSec){
         this.port = port;
         this.address= serverAddress;
+        this.token = token;
         this.connectionTimeoutSec = connectionTimeoutSec;
         this.readTimeoutSec = readTimeoutSec;
     }
