@@ -34,4 +34,7 @@ THE SOFTWARE.
     <f:entry field="release" title="Release">
         <f:textbox />
     </f:entry>
+    <f:entry field="inputs" title="User inputs">
+            <f:textbox />
+    </f:entry>
 </j:jelly>
