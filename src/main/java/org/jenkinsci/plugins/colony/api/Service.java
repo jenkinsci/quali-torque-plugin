@@ -11,6 +11,6 @@ public class Service implements Serializable
     public String name;
     @SerializedName("shortcuts")
     public List<String> shortcuts;
-    @SerializedName("deployment_status")
-    public String deploymentStatus;
+    @SerializedName("status")
+    public String status;
 }
