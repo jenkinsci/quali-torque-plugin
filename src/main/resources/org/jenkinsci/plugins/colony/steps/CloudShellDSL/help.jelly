@@ -20,7 +20,7 @@
                 the json details can be written to json valid string using sandbox.toString()
             </p>
         </dd>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, release, timeout).doInsideSandbox(endSandboxOnFail=True){sandbox -> ...}</code></dt>
+        <dt><code>colony.blueprint(spaceName, name, sandboxName, release, timeout).doInsideSandbox(endSandboxOnFail=true){sandbox -> ...}</code></dt>
         <dd>
             <p>
                 Starts a sandbox under specified space name and runs the delegate passing it the sandbox json details.
