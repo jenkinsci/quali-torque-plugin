@@ -73,8 +73,7 @@ public class StartSandboxStep extends Step {
             CreateSandboxRequest req = new CreateSandboxRequest(this.blueprint, sandboxName, this.release,true,inputs);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(this.spaceName, req);
             if(!res.isSuccessful())
-                throw new AbortException(res.getError());
-
+                throw new AbortException(String.format("status_code: %s error: %s", res.getStatusCode(), res.getError()));
             return res.getData().id;
         }
     }

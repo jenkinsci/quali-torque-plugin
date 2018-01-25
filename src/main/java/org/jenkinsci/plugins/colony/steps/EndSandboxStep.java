@@ -61,7 +61,7 @@ public class EndSandboxStep extends Step{
             taskListener.getLogger().println(String.format(Messages.EndSandbox_EndingMsg(sandboxId)));
             ResponseData<Void> res = sandboxAPIService.deleteSandbox(this.spaceName, this.sandboxId);
             if(!res.isSuccessful())
-                throw new AbortException(res.getError());
+                throw new AbortException(String.format("status_code: %s error: %s", res.getStatusCode(), res.getError()));
             return null;
         }
     }
