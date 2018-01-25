@@ -53,6 +53,7 @@ try {
                 }
                 stage('Integration test') {
                     def release = [:]
+
                     release['jenkins'] = changeset
                     release['cs18-api'] = 'forDexter'
                     release['cs18-account-ms'] = 'forDexter'

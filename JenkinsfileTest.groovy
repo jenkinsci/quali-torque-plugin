@@ -17,12 +17,12 @@ try {
                 stage('Integration Test') {
                     def release = [:]
                     release["fasty"] = ""
-
+                    def inputs = [:]
                     parallel(
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("demo trial","fasty-k8s", "testing_startSandbox", release, 5).startSandbox()
+                                    sandbox = colony.blueprint("demo trial","fasty-k8s", "testing_startSandbox", release, 5,inputs).startSandbox()
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
@@ -36,7 +36,7 @@ try {
                                 }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("demo trial", "fasty-k8s", "testing_doInsideSandbox", release, 5).doInsideSandbox() { sandbox_details ->
+                                colony.blueprint("demo trial", "fasty-k8s", "testing_doInsideSandbox", release, 5,inputs).doInsideSandbox() { sandbox_details ->
                                     printSandbox(sandbox_details, "doInsideSandbox")
                             }
                     })

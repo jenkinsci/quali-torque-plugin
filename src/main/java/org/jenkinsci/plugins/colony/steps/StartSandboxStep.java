@@ -31,19 +31,21 @@ public class StartSandboxStep extends Step {
     private final String blueprint;
     private String sandboxName;
     private Map<String, String> release;
+    private Map<String, String> inputs;
 
     @DataBoundConstructor
-    public StartSandboxStep(@Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release)
+    public StartSandboxStep(@Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release, @Nonnull Map<String, String> inputs)
     {
         this.spaceName = spaceName;
         this.blueprint = blueprint;
         this.sandboxName = sandboxName;
         this.release = release;
+        this.inputs = inputs;
     }
 
     @Override
     public StepExecution start(StepContext stepContext) throws Exception {
-        return new Execution(stepContext, this.spaceName, this.blueprint, this.sandboxName, this.release);
+        return new Execution(stepContext, this.spaceName, this.blueprint, this.sandboxName, this.release, this.inputs);
     }
 
     public static class Execution extends SandboxStepExecution<String> {
@@ -51,13 +53,15 @@ public class StartSandboxStep extends Step {
         private final String sandboxName;
         private final String blueprint;
         private final Map<String, String> release;
+        private final Map<String, String> inputs;
 
-        protected Execution(@Nonnull StepContext context, @Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release) throws Exception {
+        protected Execution(@Nonnull StepContext context, @Nonnull String spaceName, @Nonnull String blueprint, @Nonnull String sandboxName, @Nonnull Map<String, String> release, @Nonnull Map<String, String> inputs) throws Exception {
             super(context);
             this.spaceName = spaceName;
             this.sandboxName = sandboxName;
             this.blueprint = blueprint;
             this.release = release;
+            this.inputs = inputs;
         }
 
         @Override
@@ -66,7 +70,7 @@ public class StartSandboxStep extends Step {
             assert taskListener != null;
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
             String sandboxName = this.sandboxName.isEmpty()? PluginHelpers.GenerateSandboxName():this.sandboxName;
-            CreateSandboxRequest req = new CreateSandboxRequest(this.blueprint, sandboxName, this.release,true);
+            CreateSandboxRequest req = new CreateSandboxRequest(this.blueprint, sandboxName, this.release,true,inputs);
             ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(this.spaceName, req);
             if(!res.isSuccessful())
                 throw new AbortException(res.getError());
