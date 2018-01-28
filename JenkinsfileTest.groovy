@@ -6,10 +6,13 @@ try {
                 stage('Create and authorize account'){
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
                     def loggedInAccount = readJSON file: 'logged_in_account'
-                    access_token = loggedInAccount['access_token']
+                    echo "loggedInAccount: $loggedInAccount"
+                    access_token = loggedInAccount.access_token
+                    echo "access_token: $access_token"
                 }
                 stage('Publish Blueprint') {
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer ${access_token}\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
+                    echo "access_token: $access_token"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
                 }
                 stage('Integration Test') {
                     def release = [:]
