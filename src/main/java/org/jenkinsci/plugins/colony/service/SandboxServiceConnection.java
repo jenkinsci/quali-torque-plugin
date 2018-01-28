@@ -12,8 +12,12 @@ public class SandboxServiceConnection {
     public SandboxServiceConnection(String serverAddress, int port, String token, int connectionTimeoutSec, int readTimeoutSec){
         this.port = port;
         this.address= serverAddress;
-        this.token = String.format("Bearer %s",token);
+        this.token = token;
         this.connectionTimeoutSec = connectionTimeoutSec;
         this.readTimeoutSec = readTimeoutSec;
+    }
+
+    public String getAuthorizationHeader(){
+        return String.format("Bearer %s",this.token);
     }
 }

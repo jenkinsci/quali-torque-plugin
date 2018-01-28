@@ -39,15 +39,15 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
     }
 
     public ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws RuntimeException, IOException {
-        return execute(sandboxAPI.getSandboxById(this.connection.token, spaceName, sandboxId));
+        return execute(sandboxAPI.getSandboxById(this.connection.getAuthorizationHeader(), spaceName, sandboxId));
     }
 
     public ResponseData<CreateSandboxResponse> createSandbox(String spaceName, final CreateSandboxRequest req) throws IOException {
-        return execute(sandboxAPI.createSandbox(this.connection.token, spaceName, req));
+        return execute(sandboxAPI.createSandbox(this.connection.getAuthorizationHeader(), spaceName, req));
     }
 
     public ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException {
-        return execute(sandboxAPI.deleteSandbox(this.connection.token, spaceName, sandboxId));
+        return execute(sandboxAPI.deleteSandbox(this.connection.getAuthorizationHeader(), spaceName, sandboxId));
     }
 
     private static <T> ResponseData<T> parseResponse(final Response<T> response) throws IOException {

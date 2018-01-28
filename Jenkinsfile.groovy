@@ -58,7 +58,7 @@ try {
                     release['cs18-api'] = 'forDexter'
                     release['cs18-account-ms'] = 'forDexter'
                     release['cs18-db'] = 'forDexter'
-                    colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox { sandbox ->
+                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox() //{ sandbox ->
                         echo "sandbox env: " + sandbox.toString()
 
                         def url
@@ -78,7 +78,7 @@ try {
                         if(innerLog.contains("\"result\":\"FAILURE\"")){
                             throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
                         }
-                    }
+                    //}
                 }
             }
         }
