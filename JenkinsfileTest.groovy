@@ -1,7 +1,7 @@
 try {
     node('master') {
         timeout(time: 60, unit: 'MINUTES') {
-            def longToken
+            def access_token
             timestamps {
                 stage('Create and authorize account'){
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
@@ -9,7 +9,7 @@ try {
                     access_token = loggedInAccount['access_token']
                 }
                 stage('Publish Blueprint') {
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header 'Authorization: Bearer ${access_token}' -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer ${access_token}\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
                 }
                 stage('Integration Test') {
                     def release = [:]
