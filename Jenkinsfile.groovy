@@ -6,7 +6,7 @@ def devopsVersion = 'v1' /*devops file version*/
 def changeset /*Keep the current build changeset*/
 
 properties([buildDiscarder(logRotator(numToKeepStr: '100', artifactNumToKeepStr: '30'))])
-properties([pipelineTriggers([cron('H/1 * * * *')])])
+properties([pipelineTriggers([cron('H 2 * * * ')])])
 
 try {
     node('gp1') {
