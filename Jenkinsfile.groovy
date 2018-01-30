@@ -6,6 +6,10 @@ def devopsVersion = 'v1' /*devops file version*/
 def changeset /*Keep the current build changeset*/
 
 properties([buildDiscarder(logRotator(numToKeepStr: '100', artifactNumToKeepStr: '30'))])
+//Schedule to run every day at 2:00AM
+if (env.BRANCH_NAME.equals('master')) {
+    properties([pipelineTriggers([cron('H 2 * * * ')])])
+}
 
 try {
     node('gp1') {
@@ -28,11 +32,10 @@ try {
 
                 stage('Clean, Package & upload') {
                     dir('colony') {
-                        if( env.BRANCH_NAME.equals('master') ) {
+                        if (env.BRANCH_NAME.equals('master')) {
                             echo "in master branch - running maven with clean"
                             devops.runSh('mvn -B clean package')
-                        }
-                        else{
+                        } else {
                             echo "NOT in master branch - running maven without clean"
                             devops.runSh('mvn -B package')
                         }
@@ -58,26 +61,27 @@ try {
                     release['cs18-api'] = 'forDexter'
                     release['cs18-account-ms'] = 'forDexter'
                     release['cs18-db'] = 'forDexter'
-                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox() //{ sandbox ->
-                        echo "sandbox env: " + sandbox.toString()
+                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox()
+                    //{ sandbox ->
+                    echo "sandbox env: " + sandbox.toString()
 
-                        def url
-                        //start job named test1
-                        def jobName = "test1"
-                        for (application in sandbox.applications) {
-                            if (application["name"] == "jenkins") {
-                                url = application["shortcuts"][0]
-                                break
-                            }
+                    def url
+                    //start job named test1
+                    def jobName = "test1"
+                    for (application in sandbox.applications) {
+                        if (application["name"] == "jenkins") {
+                            url = application["shortcuts"][0]
+                            break
                         }
-                        echo "url: ${url}"
-                        def innerLog = devops.runJenkinsJob(jobName, url, true)
-                        writeFile file: 'innerLog.txt', text: innerLog
-                        devops.uploadArtifact("innerLog.txt")
+                    }
+                    echo "url: ${url}"
+                    def innerLog = devops.runJenkinsJob(jobName, url, true)
+                    writeFile file: 'innerLog.txt', text: innerLog
+                    devops.uploadArtifact("innerLog.txt")
 
-                        if(innerLog.contains("\"result\":\"FAILURE\"")){
-                            throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
-                        }
+                    if (innerLog.contains("\"result\":\"FAILURE\"")) {
+                        throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
+                    }
                     //}
                 }
             }
