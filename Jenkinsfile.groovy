@@ -18,7 +18,7 @@ try {
                 stage('Init') {
                     node('master') {
                         devops = load('/var/lib/jenkins/devopsLoader.groovy').loadDevops(devopsVersion)
-                        devops.slackSend('good', slackChannel, "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
+                        devops.slackSend('good', devops.constatns.slack().Channel, "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
                     }
                 }
                 stage('Checkout') {
@@ -87,11 +87,11 @@ try {
             }
         }
     }
-    devops.slackSend('good', slackChannel, "Build Finished: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
+    devops.slackSend('good', devops.constatns.slack().Channel, "Build Finished: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
 }
 catch (Exception ex) {
 
-    devops.slackSend('danger', slackChannel, "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}\n$ex.message")
+    devops.slackSend('danger', devops.constatns.slack().Channel, "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}\n$ex.message")
     if (env.BRANCH_NAME == 'master') {
         currentBuild.result = "FAILURE"
         devops.sendEmailEx('${SCRIPT, template="build_status.template"}', "[Jenkins] Failure: ${env.JOB_NAME} (Build #${env.BUILD_NUMBER})", devops.constans.mail().ALL)
