@@ -94,7 +94,7 @@ catch (Exception ex) {
     devops.slackSend('danger', devops.constants.slack().Channel, "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}\n$ex.message")
     if (env.BRANCH_NAME == 'master') {
         currentBuild.result = "FAILURE"
-        devops.sendEmailEx('${SCRIPT, template="build_status.template"}', "[Jenkins] Failure: ${env.JOB_NAME} (Build #${env.BUILD_NUMBER})", devops.constans.mail().ALL)
+        devops.sendEmailEx('${SCRIPT, template="build_status.template"}', "[Jenkins] Failure: ${env.JOB_NAME} (Build #${env.BUILD_NUMBER})", devops.constants.mail().ALL)
     }
 
     throw ex
