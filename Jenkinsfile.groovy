@@ -55,9 +55,12 @@ try {
                     def release = [:]
 
                     release['jenkins'] = changeset
-                    release['cs18-api'] = 'forDexter'
-                    release['cs18-account-ms'] = 'forDexter'
-                    release['cs18-db'] = 'forDexter'
+                    release['cs18-api'] = "forDexter"
+                    release['cs18-account-ms'] = "forDexter"
+                    release['cs18-db'] = "forDexter"
+                    release['cs18-notifications-ms'] = "forDexter"
+                    release['cs18-rabbitmq'] = "forDexter"
+                    release['cs18-ui'] = "forDexter"
                     def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox() //{ sandbox ->
                         echo "sandbox env: " + sandbox.toString()
 
