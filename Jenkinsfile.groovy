@@ -64,27 +64,28 @@ try {
                     release['cs18-db'] = "forDexter"
                     release['cs18-notifications-ms'] = "forDexter"
                     release['cs18-rabbitmq'] = "forDexter"
-                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox()
-                    //{ sandbox ->
-                    echo "sandbox env: " + sandbox.toString()
+                    colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox
+                        { sandbox ->
+                            echo "sandbox env: " + sandbox.toString()
 
-                    def url
-                    //start job named test1
-                    def jobName = "test1"
-                    for (application in sandbox.applications) {
-                        if (application["name"] == "jenkins") {
-                            url = application["shortcuts"][0]
-                            break
+                            def url
+                            //start job named test1
+                            def jobName = "test1"
+                            for (application in sandbox.applications) {
+                                if (application["name"] == "jenkins") {
+                                    url = application["shortcuts"][0]
+                                    break
+                                }
+                            }
+                            echo "url: ${url}"
+                            def innerLog = devops.runJenkinsJob(jobName, url, true)
+                            writeFile file: 'innerLog.txt', text: innerLog
+                            devops.uploadArtifact("innerLog.txt")
+
+                            if (innerLog.contains("\"result\":\"FAILURE\"")) {
+                                throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
+                            }
                         }
-                    }
-                    echo "url: ${url}"
-                    def innerLog = devops.runJenkinsJob(jobName, url, true)
-                    writeFile file: 'innerLog.txt', text: innerLog
-                    devops.uploadArtifact("innerLog.txt")
-
-                    if (innerLog.contains("\"result\":\"FAILURE\"")) {
-                        throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
-                    }
                 }
             }
         }
