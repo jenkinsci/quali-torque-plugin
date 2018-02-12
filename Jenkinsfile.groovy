@@ -64,7 +64,7 @@ try {
                     release['cs18-db'] = "forDexter"
                     release['cs18-notifications-ms'] = "forDexter"
                     release['cs18-rabbitmq'] = "forDexter"
-                    colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox
+                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox
                         { sandbox ->
                             echo "sandbox env: " + sandbox.toString()
 
