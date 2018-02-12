@@ -12,7 +12,7 @@ try {
                 }
                 stage('Publish Blueprint') {
                     echo "access_token: $access_token"
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo trial/catalog'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo-trial/catalog'"
                 }
                 stage('Integration Test') {
                     def release = [:]
@@ -22,7 +22,7 @@ try {
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("demo trial","fasty-k8s", "testing_startSandbox", release, 5,inputs).startSandbox()
+                                    sandbox = colony.blueprint("demo-trial","fasty-k8s", "testing_startSandbox", release, 5,inputs).startSandbox()
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
@@ -32,11 +32,11 @@ try {
                                 finally {
                                     echo "colony.endSandbox(sandbox.id)"
                                     if (sandbox != null && sandbox.id != null)
-                                        colony.endSandbox("demo trial", sandbox.id)
+                                        colony.endSandbox("demo-trial", sandbox.id)
                                 }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("demo trial", "fasty-k8s", "testing_doInsideSandbox", release, 5,inputs).doInsideSandbox() { sandbox_details ->
+                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", release, 5,inputs).doInsideSandbox() { sandbox_details ->
                                     printSandbox(sandbox_details, "doInsideSandbox")
                             }
                     })

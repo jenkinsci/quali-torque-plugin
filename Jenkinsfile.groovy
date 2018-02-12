@@ -6,6 +6,10 @@ def devopsVersion = 'v1' /*devops file version*/
 def changeset /*Keep the current build changeset*/
 
 properties([buildDiscarder(logRotator(numToKeepStr: '100', artifactNumToKeepStr: '30'))])
+//Schedule to run every day at 2:00AM
+if (env.BRANCH_NAME.equals('master')) {
+    properties([pipelineTriggers([cron('H 2 * * * ')])])
+}
 
 try {
     node('gp1') {
@@ -14,6 +18,7 @@ try {
                 stage('Init') {
                     node('master') {
                         devops = load('/var/lib/jenkins/devopsLoader.groovy').loadDevops(devopsVersion)
+                        devops.slackSend('good', devops.constants.slack().Channel, "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
                     }
                 }
                 stage('Checkout') {
@@ -28,11 +33,10 @@ try {
 
                 stage('Clean, Package & upload') {
                     dir('colony') {
-                        if( env.BRANCH_NAME.equals('master') ) {
+                        if (env.BRANCH_NAME.equals('master')) {
                             echo "in master branch - running maven with clean"
                             devops.runSh('mvn -B clean package')
-                        }
-                        else{
+                        } else {
                             echo "NOT in master branch - running maven without clean"
                             devops.runSh('mvn -B package')
                         }
@@ -55,38 +59,43 @@ try {
                     def release = [:]
 
                     release['jenkins'] = changeset
-                    release['cs18-api'] = "forDexter"
-                    release['cs18-account-ms'] = "forDexter"
-                    release['cs18-db'] = "forDexter"
-                    release['cs18-notifications-ms'] = "forDexter"
-                    release['cs18-rabbitmq'] = "forDexter"
-                    release['cs18-ui'] = "forDexter"
-                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox() //{ sandbox ->
-                        echo "sandbox env: " + sandbox.toString()
+                    release['cs18-api'] = 'forDexter'
+                    release['cs18-account-ms'] = 'forDexter'
+                    release['cs18-db'] = 'forDexter'
+                    def sandbox = colony.blueprint("demo trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox()
+                    //{ sandbox ->
+                    echo "sandbox env: " + sandbox.toString()
 
-                        def url
-                        //start job named test1
-                        def jobName = "test1"
-                        for (application in sandbox.applications) {
-                            if (application["name"] == "jenkins") {
-                                url = application["shortcuts"][0]
-                                break
-                            }
+                    def url
+                    //start job named test1
+                    def jobName = "test1"
+                    for (application in sandbox.applications) {
+                        if (application["name"] == "jenkins") {
+                            url = application["shortcuts"][0]
+                            break
                         }
-                        echo "url: ${url}"
-                        def innerLog = devops.runJenkinsJob(jobName, url, true)
-                        writeFile file: 'innerLog.txt', text: innerLog
-                        devops.uploadArtifact("innerLog.txt")
+                    }
+                    echo "url: ${url}"
+                    def innerLog = devops.runJenkinsJob(jobName, url, true)
+                    writeFile file: 'innerLog.txt', text: innerLog
+                    devops.uploadArtifact("innerLog.txt")
 
-                        if(innerLog.contains("\"result\":\"FAILURE\"")){
-                            throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
-                        }
-                    //}
+                    if (innerLog.contains("\"result\":\"FAILURE\"")) {
+                        throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
+                    }
                 }
             }
         }
     }
+    devops.slackSend('good', devops.constants.slack().Channel, "Build Finished: ${env.JOB_NAME} ${env.BUILD_NUMBER}")
 }
 catch (Exception ex) {
+
+    devops.slackSend('danger', devops.constants.slack().Channel, "Build Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}\n$ex.message")
+    if (env.BRANCH_NAME == 'master') {
+        currentBuild.result = "FAILURE"
+        devops.sendEmailEx('${SCRIPT, template="build_status.template"}', "[Jenkins] Failure: ${env.JOB_NAME} (Build #${env.BUILD_NUMBER})", devops.constants.mail().ALL)
+    }
+
     throw ex
 }
