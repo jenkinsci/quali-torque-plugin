@@ -12,7 +12,7 @@ if (env.BRANCH_NAME.equals('master')) {
 }
 
 try {
-    node('gp1') {
+    node('gp2') {
         timeout(time: 60, unit: 'MINUTES') {
             timestamps {
                 stage('Init') {
