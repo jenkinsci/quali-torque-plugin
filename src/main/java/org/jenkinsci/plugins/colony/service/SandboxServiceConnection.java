@@ -16,4 +16,8 @@ public class SandboxServiceConnection {
         this.connectionTimeoutSec = connectionTimeoutSec;
         this.readTimeoutSec = readTimeoutSec;
     }
+
+    public String getAuthorizationHeader(){
+        return String.format("Bearer %s",this.token);
+    }
 }

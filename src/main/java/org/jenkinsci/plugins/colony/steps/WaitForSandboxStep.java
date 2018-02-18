@@ -100,7 +100,7 @@ public class WaitForSandboxStep extends Step {
 
             ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
-                throw new AbortException(sandboxByIdRes.getError());
+                throw new AbortException(String.format("status_code: %s error: %s", sandboxByIdRes.getStatusCode(), sandboxByIdRes.getError()));
             }
             return sandboxByIdRes;
 
@@ -127,7 +127,7 @@ public class WaitForSandboxStep extends Step {
                     isFirst= false;
                 else
                     builder.append(", ");
-                builder.append(String.format("%s: %s", service.name, service.deploymentStatus));
+                builder.append(String.format("%s: %s", service.name, service.status));
             }
             return builder.toString();
         }
