@@ -48,22 +48,23 @@ try {
                             echo "${changeset}"
                             devops.uploadArtifact("colony.hpi")
                             echo "uploadArtifact colony.hpi"
-                            devops.uploadToS3("branch.txt", "ngdevbox/applications/jenkins/${changeset}")
+                            devops.uploadToS3("branch.txt", "${devops.constants.misc().BucketName}/applications/jenkins/${changeset}")
                             echo "uploadToS3 branch.txt"
-                            devops.uploadToS3("colony.hpi", "ngdevbox/applications/jenkins/${changeset}")
+                            devops.uploadToS3("colony.hpi", "${devops.constants.misc().BucketName}/applications/jenkins/${changeset}")
                             echo "uploadToS3 colony.hpi"
                         }
                     }
                 }
                 stage('Integration test') {
                     def release = [:]
-
+                    def lastDexterArtifacts = devops.getTheLastUpdatedArtifactsPath("${devops.constants.misc().BucketName}/applications/cs18-api/dexter/")
+                    echo "Full path for artifact: " + "dexter/$lastDexterArtifacts"
                     release['jenkins'] = changeset
-                    release['cs18-api'] = "forDexter"
-                    release['cs18-account-ms'] = "forDexter"
-                    release['cs18-db'] = "forDexter"
-                    release['cs18-notifications-ms'] = "forDexter"
-                    release['cs18-rabbitmq'] = "forDexter"
+                    release['cs18-api'] = "dexter/$lastDexterArtifacts"
+                    release['cs18-account-ms'] = "dexter/$lastDexterArtifacts"
+                    release['cs18-notifications-ms'] = "dexter/$lastDexterArtifacts"
+                    release['cs18-rabbitmq'] = "Nothing" //must be here although there is not artifacts in s3
+                    release['cs18-db'] = "dexter/$lastDexterArtifacts"
                     colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox
                         { sandbox ->
                             echo "sandbox env: " + sandbox.toString()
