@@ -63,8 +63,9 @@ try {
                     release['cs18-api'] = "dexter/$lastDexterArtifacts"
                     release['cs18-account-ms'] = "dexter/$lastDexterArtifacts"
                     release['cs18-notifications-ms'] = "dexter/$lastDexterArtifacts"
-                    release['cs18-rabbitmq'] = "Nothing" //must be here although there is not artifacts in s3
-                    release['cs18-db'] = "dexter/$lastDexterArtifacts"
+                    //must be here although there is not artifacts in s3
+                    release['cs18-rabbitmq'] = ""
+                    release['cs18-postgres'] = ""
                     colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).doInsideSandbox
                         { sandbox ->
                             echo "sandbox env: " + sandbox.toString()
