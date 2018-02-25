@@ -5,7 +5,6 @@ try {
             timestamps {
                 stage('Create and authorize account'){
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
-                    sh "sleep 60m"
                     def loggedInAccount = readJSON file: 'logged_in_account'
                     echo "loggedInAccount: $loggedInAccount"
                     access_token = loggedInAccount.access_token
