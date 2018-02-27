@@ -12,12 +12,12 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    Blueprint blueprint(String spaceName, String blueprint,String sandboxName, Map<String, String> release, Integer timeout, Map<String, String> inputs = [:]){
-        return new Blueprint(this, spaceName, blueprint, sandboxName, release, timeout,inputs)
+    Blueprint blueprint(String spaceName, String blueprint, String sandboxName, Map<String, String> release, Integer timeout, Map<String, String> inputs = [:]) {
+        return new Blueprint(this, spaceName, blueprint, sandboxName, release, timeout, inputs)
     }
 
-    def endSandbox(String spaceName, String sandboxId){
-        script.endSandbox(spaceName:spaceName, sandboxId:sandboxId)
+    def endSandbox(String spaceName, String sandboxId) {
+        script.endSandbox(spaceName: spaceName, sandboxId: sandboxId)
     }
 
     private <V> V node(Closure<V> body) {
@@ -50,36 +50,52 @@ class CloudShell implements Serializable {
             this.inputs = inputs
         }
 
-        Object startSandbox(){
+        Object startSandbox(boolean endSandboxOnFail = true) {
             def sandboxJSONObject
+            def sandboxId
             cs.node {
-                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release, inputs: inputs)
-                cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
-                cs.script.echo("health check done! returned:${sandboxString}")
-                sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
+                try {
+                    sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, release: release, inputs: inputs)
+                    cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
+                    String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
+                    cs.script.echo("health check done! returned:${sandboxString}")
+                    sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
+                }
+                catch (Exception ex) {
+                    if (sandboxId != null) {
+                        if (endSandboxOnFail) {
+                            cs.script.echo("End sandbox:${sandboxId}")
+                            cs.script.endSandbox(spaceName: spaceName, sandboxId: sandboxId)
+                        }
+                        else
+                        {
+                            cs.script.echo("Keeping sandbox:${sandboxId} up.")
+                        }
+                    }
+                    throw ex
+                }
             }
             return sandboxJSONObject
         }
 
-        def <V> V doInsideSandbox(boolean endSandboxOnFail=true, Closure<V> body) {
+        def <V> V doInsideSandbox(boolean endSandboxOnFail = true, Closure<V> body) {
             cs.node {
                 cs.script.echo(blueprint)
                 cs.script.echo(new Gson().toJson(release))
                 cs.script.echo(spaceName)
-                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName:sandboxName, release: release, inputs: inputs)
-                def sandbox_status=""
+                def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, release: release, inputs: inputs)
+                def sandbox_status = ""
                 try {
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
-                    String sandboxString = cs.script.waitForSandbox(spaceName:spaceName, sandboxId: sandboxId, timeout: timeout)
+                    String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     def sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                     sandbox_status = sandboxJSONObject.sandbox_status
                     body.call(sandboxJSONObject)
                 }
                 finally {
-                    if(sandbox_status == "Active" || endSandboxOnFail)
-                        cs.script.endSandbox(spaceName:spaceName, sandboxId:sandboxId)
+                    if (sandbox_status == "Active" || endSandboxOnFail)
+                        cs.script.endSandbox(spaceName: spaceName, sandboxId: sandboxId)
                 }
             }
         }
