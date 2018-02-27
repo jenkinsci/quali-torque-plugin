@@ -26,14 +26,14 @@ try {
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
-                                    echo ex.toString()
+                                    echo "Error: " + ex.toString()
                                     throw ex
                                 }
-                                finally {
-                                    echo "colony.endSandbox(sandbox.id)"
-                                    if (sandbox != null && sandbox.id != null)
-                                        colony.endSandbox("demo-trial", sandbox.id)
-                                }
+//                                finally {
+//                                    echo "colony.endSandbox(sandbox.id)"
+//                                    if (sandbox != null && sandbox.id != null)
+//                                        colony.endSandbox("demo-trial", sandbox.id)
+//                                }
                             },
                             "testing doInsideSandbox": {
 //                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", release, 5, inputs).doInsideSandbox() { sandbox_details ->
