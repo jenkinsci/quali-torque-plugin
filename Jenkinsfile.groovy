@@ -62,6 +62,7 @@ try {
                     release['jenkins'] = changeset
                     release['cs18-api'] = "dexter/$lastDexterArtifacts"
                     release['cs18-account-ms'] = "dexter/$lastDexterArtifacts"
+                    release['cs18-blueprint-ms'] = "dexter/$lastDexterArtifacts"
                     release['cs18-notifications-ms'] = "dexter/$lastDexterArtifacts"
                     //must be here although there is not artifacts in s3
                     release['cs18-rabbitmq'] = ""
