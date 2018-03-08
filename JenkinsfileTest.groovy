@@ -15,14 +15,14 @@ try {
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"blueprint_name\": \"fasty-k8s\" }' 'http://cs18-api.sandbox.com:5050/api/spaces/demo-trial/catalog'"
                 }
                 stage('Integration Test') {
-                    def release = [:]
-                    release["fasty"] = ""
+                    def artifacts = [:]
+                    artifacts["fasty"] = "applications/fasty/"
                     def inputs = [:]
                     parallel(
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("demo-trial","fasty-k8s", "testing_startSandbox", release, 5,inputs).startSandbox()
+                                    sandbox = colony.blueprint("demo-trial","fasty-k8s", "testing_startSandbox", artifacts, 5,inputs).startSandbox()
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
@@ -36,7 +36,7 @@ try {
                                 }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", release, 5,inputs).doInsideSandbox() { sandbox_details ->
+                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5,inputs).doInsideSandbox() { sandbox_details ->
                                     printSandbox(sandbox_details, "doInsideSandbox")
                             }
                     })

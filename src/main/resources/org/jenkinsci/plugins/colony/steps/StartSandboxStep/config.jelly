@@ -31,7 +31,7 @@ THE SOFTWARE.
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>
-    <f:entry field="release" title="Release">
+    <f:entry field="artifacts" title="Artifacts">
         <f:textbox />
     </f:entry>
     <f:entry field="inputs" title="User inputs">
