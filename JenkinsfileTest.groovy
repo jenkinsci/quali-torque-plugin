@@ -22,7 +22,7 @@ try {
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("demo-trial", "fasty-k8s", "testing_startSandbox", release, 5, inputs).startSandbox(true)
+                                    sandbox = colony.blueprint("demo-trial", "fasty-k8s", "testing_startSandbox", release, 5, inputs).startSandbox(true) //true means: endSandboxOnFail
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
