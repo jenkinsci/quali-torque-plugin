@@ -62,16 +62,13 @@ class CloudShell implements Serializable {
                     sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                 }
                 catch (Exception ex) {
-                    cs.script.echo("inside catch with sandboxid:${sandboxId}")
+                    cs.script.echo("** Exception thrown during sandbox creation **")
                     if (sandboxId != null) {
-                        cs.script.echo("first if:${sandboxId}")
+                        cs.script.echo("Sandbox id:${sandboxId}")
                         if (endSandboxOnFail) {
-                            cs.script.echo("inside endSandboxOnFail:${sandboxId}")
                             cs.script.echo("End sandbox:${sandboxId}")
                             cs.script.endSandbox(spaceName: spaceName, sandboxId: sandboxId)
-                        }
-                        else
-                        {
+                        } else {
                             cs.script.echo("Keeping sandbox:${sandboxId} up.")
                         }
                     }
