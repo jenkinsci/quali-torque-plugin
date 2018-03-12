@@ -69,7 +69,7 @@ try {
                     //must be here although there is not artifacts in s3
                     release['cs18-rabbitmq'] = ""
                     release['cs18-postgres'] = ""
-                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox
+                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox()
                         { //sandbox ->
                             echo "sandbox env: " + sandbox.toString()
 
