@@ -70,7 +70,7 @@ try {
                     release['cs18-rabbitmq'] = ""
                     release['cs18-postgres'] = ""
                     var sandbox = colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", release, 20).startSandbox(false)
-                        { //sandbox ->
+                        //{ //sandbox ->
                             echo "sandbox env: " + sandbox.toString()
 
                             def url
@@ -90,7 +90,7 @@ try {
                             if (innerLog.contains("\"result\":\"FAILURE\"")) {
                                 throw new Exception("one or more of the innerSandboxes failed. look at the innerLog.txt artifact")
                             }
-                        }
+                        //}
                 }
             }
         }
