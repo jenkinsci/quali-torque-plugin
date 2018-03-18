@@ -3,7 +3,7 @@ try {
         timeout(time: 60, unit: 'MINUTES') {
             def access_token
             timestamps {
-                stage('Create and authorize account'){
+                stage('Create and authorize account') {
                     sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
                     def loggedInAccount = readJSON file: 'logged_in_account'
                     echo "loggedInAccount: $loggedInAccount"
@@ -22,24 +22,24 @@ try {
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("demo-trial","fasty-k8s", "testing_startSandbox", artifacts, 5,inputs).startSandbox()
+                                    sandbox = colony.blueprint("demo-trial", "fasty-k8s", "testing_startSandbox", artifacts, 5, inputs).startSandbox(true) //true means: endSandboxOnFail
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
-                                    echo ex.toString()
+                                    echo "Error: " + ex.toString()
                                     throw ex
                                 }
-                                finally {
-                                    echo "colony.endSandbox(sandbox.id)"
-                                    if (sandbox != null && sandbox.id != null)
-                                        colony.endSandbox("demo-trial", sandbox.id)
-                                }
+//                                finally {
+//                                    echo "colony.endSandbox(sandbox.id)"
+//                                    if (sandbox != null && sandbox.id != null)
+//                                        colony.endSandbox("demo-trial", sandbox.id)
+//                                }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5,inputs).doInsideSandbox() { sandbox_details ->
-                                    printSandbox(sandbox_details, "doInsideSandbox")
-                            }
-                    })
+//                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5, inputs).doInsideSandbox() { sandbox_details ->
+//                                    printSandbox(sandbox_details, "doInsideSandbox")
+//                                }
+                            })
                 }
             }
         }
@@ -49,13 +49,13 @@ catch (Exception ex) {
     throw ex
 }
 
-def printSandbox(sandbox, name){
+def printSandbox(sandbox, name) {
     echo "start:" + name
     echo "sandbox: " + sandbox
     echo "sandbox.toString(): " + sandbox.toString()
     echo "sandbox.toString(1): " + sandbox.toString(1)
     echo "sandbox.toString(6): " + sandbox.toString(6)
-    echo "sandbox.toString(2,4): " + sandbox.toString(2,4)
+    echo "sandbox.toString(2,4): " + sandbox.toString(2, 4)
     echo "sandbox.id: " + sandbox.id
     echo "sandbox.name: " + sandbox.name
     echo "sandbox.blueprint_name: " + sandbox.blueprint_name
