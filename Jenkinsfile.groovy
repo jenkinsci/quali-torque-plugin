@@ -58,13 +58,13 @@ try {
                 stage('Integration test') {
                     def release = [:]
                     def lastDexterArtifacts = devops.getTheLastUpdatedArtifactsPath("${devops.constants.misc().BucketName}/applications/cs18-api/dexter/")
-                    echo "Full path for artifact: " + "dexter/$lastDexterArtifacts"
+                    echo "Full path for artifact: " + "9e402aeb1214aa0d704f099e96b5746a64133622_build14"
 
                     release['jenkins'] = changeset
-                    release['cs18-api'] = "dexter/$lastDexterArtifacts"
-                    release['cs18-account-ms'] = "dexter/$lastDexterArtifacts"
-                    release['cs18-notifications-ms'] = "dexter/$lastDexterArtifacts"
-                    release['cs18-blueprint-ms'] = "dexter/$lastDexterArtifacts"
+                    release['cs18-api'] = "9e402aeb1214aa0d704f099e96b5746a64133622_build14"
+                    release['cs18-account-ms'] = "9e402aeb1214aa0d704f099e96b5746a64133622_build14"
+                    release['cs18-notifications-ms'] = "9e402aeb1214aa0d704f099e96b5746a64133622_build14"
+                    release['cs18-blueprint-ms'] = "9e402aeb1214aa0d704f099e96b5746a64133622_build14"
 
                     //must be here although there is not artifacts in s3
                     release['cs18-rabbitmq'] = ""
