@@ -61,10 +61,10 @@ try {
                     echo "Full path for artifact: " + "dexter/$lastDexterArtifacts"
 
                     artifacts['jenkins'] = "applications/jenkins/$changeset"
-                    artifacts['cs18-api'] = "applications/cs18-api/${lastDexterArtifacts}"
-                    artifacts['cs18-account-ms'] = "applications/cs18-account-ms/${lastDexterArtifacts}"
-                    artifacts['cs18-notifications-ms'] = "applications/cs18-notifications-ms/${lastDexterArtifacts}"
-                    artifacts['cs18-blueprint-ms'] = "applications/cs18-blueprint-ms/${lastDexterArtifacts}"
+                    artifacts['cs18-api'] = "applications/cs18-api/dexter/${lastDexterArtifacts}"
+                    artifacts['cs18-account-ms'] = "applications/cs18-account-ms/dexter/${lastDexterArtifacts}"
+                    artifacts['cs18-notifications-ms'] = "applications/cs18-notifications-ms/dexter/${lastDexterArtifacts}"
+                    artifacts['cs18-blueprint-ms'] = "applications/cs18-blueprint-ms/dexter/${lastDexterArtifacts}"
                     // both must be here although there is not artifacts in s3
                     artifacts['cs18-rabbitmq'] = "applications/cs18-rabbitmq/"
                     artifacts['cs18-postgres'] = "applications/cs18-postgres/"
