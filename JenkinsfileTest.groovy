@@ -29,16 +29,16 @@ try {
                                     echo "Error: " + ex.toString()
                                     throw ex
                                 }
-//                                finally {
-//                                    echo "colony.endSandbox(sandbox.id)"
-//                                    if (sandbox != null && sandbox.id != null)
-//                                        colony.endSandbox("demo-trial", sandbox.id)
-//                                }
+                                finally {
+                                    echo "colony.endSandbox(sandbox.id)"
+                                    if (sandbox != null && sandbox.id != null)
+                                        colony.endSandbox("demo-trial", sandbox.id)
+                                }
                             },
                             "testing doInsideSandbox": {
-//                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5, inputs).doInsideSandbox() { sandbox_details ->
-//                                    printSandbox(sandbox_details, "doInsideSandbox")
-//                                }
+                                colony.blueprint("demo-trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5, inputs).doInsideSandbox() { sandbox_details ->
+                                    printSandbox(sandbox_details, "doInsideSandbox")
+                                }
                             })
                 }
             }
