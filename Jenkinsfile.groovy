@@ -70,7 +70,7 @@ try {
                     artifacts['cs18-postgres'] = "applications/cs18-postgres/"
 
 
-                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", artifacts, 20).doInsideSandbox
+                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", artifacts, 20).doInsideSandbox(false)
                         { sandbox ->
                             echo "sandbox env: " + sandbox.toString()
 
