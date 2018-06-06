@@ -127,7 +127,21 @@ public class WaitForSandboxStep extends Step {
                     isFirst= false;
                 else
                     builder.append(", ");
+
                 builder.append(String.format("%s: %s", service.name, service.status));
+            }
+
+            if (!sandbox.sandboxErrors.isEmpty()) {
+                builder.append(System.getProperty("line.separator"));
+                builder.append("Sandbox Errors: ");
+                for (SandboxErrorService service : sandbox.sandboxErrors) {
+                    if (isFirst)
+                        isFirst = false;
+                    else
+                        builder.append(", ");
+
+                    builder.append(String.format("%s: %s", service.time, service.code, service.message));
+                }
             }
             return builder.toString();
         }

@@ -9,6 +9,7 @@ public class CreateSandboxRequest
     public final Map<String, String> artifacts;
     public final boolean automation;
     public final Map<String, String> inputs;
+    public final String description;
 
     public CreateSandboxRequest(String blueprintName,
                                 String sandboxName,
@@ -21,6 +22,7 @@ public class CreateSandboxRequest
         this.artifacts = artifacts;
         this.automation = automation;
         this.inputs = inputs;
+        this.description="JenkinsOriginSandbox";
     }
 }
 

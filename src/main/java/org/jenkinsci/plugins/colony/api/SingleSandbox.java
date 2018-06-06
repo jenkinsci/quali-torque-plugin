@@ -17,4 +17,6 @@ public class SingleSandbox implements Serializable
     public List<Service> applications;
     @SerializedName("sandbox_status")
     public String sandboxStatus;
+    @SerializedName("errors")
+    public List<SandboxErrorService> sandboxErrors;
 }

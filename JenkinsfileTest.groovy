@@ -4,11 +4,17 @@ try {
             def access_token
             timestamps {
                 stage('Create and authorize account') {
-                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"account_name\": \"demo\", \"first_name\": \"demo\", \"last_name\": \"demo\", \"email\": \"demo@demo.com\", \"password\": \"Q!Nemesis17\", \"phone_number\": \"demo\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/register'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' -d '{ \"email\": \"demo@demo.com\", \"password\": \"Q!Nemesis17\" }' 'http://cs18-api.sandbox.com:5050/api/accounts/demo/login' > logged_in_account"
                     def loggedInAccount = readJSON file: 'logged_in_account'
                     echo "loggedInAccount: $loggedInAccount"
                     access_token = loggedInAccount.access_token
                     echo "access_token: $access_token"
+                }
+                stage('Assign Roles') {
+                    echo "Assigning Roles"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"id\": \"9e97ac67-97b6-4215-a758-6d7150aafb96\", \"name\": \"aws-staging\", \"arn_role\": \"arn:aws:iam::513341655526:role/trust-dev-create-sandboxes-ColonyRole-15ZV2QNN3I036\", \"external_id\": \"9e97ac67-97b6-4215-a758-6d7150aafb96\" }' 'http://cs18-api.sandbox.com:5050/api/settings/cloudaccounts/aws'"
+                    sh "curl -X POST --header 'Content-Type: application/json-patch+json' --header 'Accept: application/json' --header \"Authorization: Bearer $access_token\" -d '{ \"bucket\": \"colony-dev-artifacts\", \"arn_role\": \"arn:aws:iam::513341655526:role/colony-create-artifacts-url-9999f310-3d88-11e8-9367-50a68645b236\", \"external_id\": \"9e97ac67-97b6-4215-a758-6d7150aafb96\" }' 'http://cs18-api.sandbox.com:5050/api/settings/artifactrepos/s3'"
                 }
                 stage('Publish Blueprint') {
                     echo "access_token: $access_token"
@@ -16,7 +22,6 @@ try {
                 }
                 stage('Integration Test') {
                     def artifacts = [:]
-                    artifacts["fasty"] = "applications/fasty/"
                     def inputs = [:]
                     parallel(
                             "testing startSandbox": {
