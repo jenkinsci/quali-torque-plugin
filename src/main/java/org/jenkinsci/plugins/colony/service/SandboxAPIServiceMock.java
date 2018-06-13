@@ -36,14 +36,14 @@ public class SandboxAPIServiceMock implements SandboxAPIService{
     }
 
     @Override
-    public ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws IOException {
-        SingleSandbox mach = null;
+    public ResponseData<Object> getSandboxById(String spaceName, String sandboxId) throws IOException {
+        Object match = null;
         for(SingleSandbox sandbox: sandboxes){
             if(sandbox.id == sandboxId){
-                mach = sandbox;
+                match = sandbox;
             }
         }
-        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(mach);
-        return ResponseData.ok(mach, 200, rawBodyJson);
+        String rawBodyJson  = new GsonBuilder().setPrettyPrinting().create().toJson(match);
+        return ResponseData.ok(match, 200, rawBodyJson);
     }
 }
