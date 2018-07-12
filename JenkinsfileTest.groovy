@@ -20,7 +20,7 @@ try {
                                 finally {
                                     echo "colony.endSandbox(sandbox.id)"
                                     if (sandbox != null && sandbox.id != null)
-                                        colony.endSandbox("default", sandbox.id)
+                                        colony.endSandbox("Trial", sandbox.id)
                                 }
                             },
                             "testing doInsideSandbox": {
