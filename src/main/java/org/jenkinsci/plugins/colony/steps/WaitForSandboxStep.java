@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.colony.steps;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
@@ -67,6 +68,8 @@ public class WaitForSandboxStep extends Step {
         private final String spaceName;
         private final String sandboxId;
         private Integer timeout;
+        private String prevStatus = "";
+        private String currStatus = "";
 
         protected Execution(@Nonnull StepContext context, String spaceName, String sandboxId, Integer timeout) throws Exception {
             super(context);
@@ -82,13 +85,20 @@ public class WaitForSandboxStep extends Step {
 
         public String waitForSandbox(String spaceName, String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
+            SingleSandbox sandboxData = null;
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
             {
-                ResponseData<SingleSandbox> sandbox = getSandbox(spaceName, sandboxId);
+                ResponseData<Object> sandbox = getSandbox(spaceName, sandboxId);
                 if(sandbox != null)
                 {
-                    if(waitForSandbox(sandbox.getData()))
+                    sandboxData = new Gson().fromJson(sandbox.getRawBodyJson(), SingleSandbox.class);
+
+                    if (!sandboxData.sandboxStatus.equals(this.prevStatus)) {
+                        prevStatus = sandboxData.sandboxStatus;
+                    }
+
+                    if(waitForSandbox(sandboxData))
                         return sandbox.getRawBodyJson();
                 }
                 Thread.sleep(2000);
@@ -96,11 +106,16 @@ public class WaitForSandboxStep extends Step {
             throw new TimeoutException(String.format(Messages.WaitingForSandboxTimeoutError(),timeoutMinutes));
         }
 
-        private ResponseData<SingleSandbox> getSandbox(String spaceName, String sandboxId) throws IOException {
-
-            ResponseData<SingleSandbox> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
+        private ResponseData<Object> getSandbox(String spaceName, String sandboxId) throws IOException {
+            ResponseData<Object> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
-                throw new AbortException(String.format("status_code: %s error: %s", sandboxByIdRes.getStatusCode(), sandboxByIdRes.getError()));
+                for(int i=0; i<5; i++){
+                    sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
+                    if (sandboxByIdRes.isSuccessful()){
+                        return sandboxByIdRes;
+                    }
+                }
+                throw new AbortException(String.format("failed after 5 retries. status_code: %s error: %s", sandboxByIdRes.getStatusCode(), sandboxByIdRes.getError()));
             }
             return sandboxByIdRes;
 
@@ -127,7 +142,21 @@ public class WaitForSandboxStep extends Step {
                     isFirst= false;
                 else
                     builder.append(", ");
+
                 builder.append(String.format("%s: %s", service.name, service.status));
+            }
+
+            if (!sandbox.sandboxErrors.isEmpty()) {
+                builder.append(System.getProperty("line.separator"));
+                builder.append("Sandbox Errors: ");
+                for (SandboxErrorService service : sandbox.sandboxErrors) {
+                    if (isFirst)
+                        isFirst = false;
+                    else
+                        builder.append(", ");
+
+                    builder.append(String.format("%s: %s", service.time, service.code, service.message));
+                }
             }
             return builder.toString();
         }

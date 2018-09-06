@@ -9,5 +9,5 @@ public interface SandboxAPIService
 {
     ResponseData<CreateSandboxResponse> createSandbox(String spaceName, final CreateSandboxRequest req) throws IOException;
     ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException;
-    ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws IOException;
+    ResponseData<Object> getSandboxById(String spaceName, String sandboxId) throws IOException;
 }

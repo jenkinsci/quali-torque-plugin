@@ -22,7 +22,7 @@ public interface SandboxAPISpec {
                              @Path("sandboxId") String sandboxId);
 
     @GET("api/spaces/{spaceName}/sandbox/{sandboxId}")
-    Call<SingleSandbox> getSandboxById(@Header("Authorization") String token,
+    Call<Object> getSandboxById(@Header("Authorization") String token,
                                        @Path("spaceName") String spaceName,
                                        @Path("sandboxId") String sandboxId);
 }

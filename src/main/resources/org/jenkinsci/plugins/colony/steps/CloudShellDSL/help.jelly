@@ -5,22 +5,22 @@
         The <code>colony</code> variable offers convenient access to colony-related functions from a Pipeline script.
     </p>
     <dl>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, release, timeout, inputs)</code></dt>
+        <dt><code>colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs)</code></dt>
         <dd>
             <p>
-                Creates a blueprint from the specified name with a specified space name, sandbox name, release ,timeout and user inputs.
+                Creates a blueprint from the specified name with a specified space name, sandbox name, artifacts, timeout and user inputs.
                 this blueprint object has the following methods:
                 startSandbox, doInsideSandbox, endSandbox
             </p>
         </dd>
-        <dt><code>sandbox = colony.blueprint(spaceName, name, sandboxName, release, timeout, inputs).startSandbox()</code></dt>
+        <dt><code>sandbox = colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).startSandbox()</code></dt>
         <dd>
             <p>
                 Starts a sandbox under specified space name from blueprint created and returns <code>sandbox</code> json details.
                 the json details can be written to json valid string using sandbox.toString()
             </p>
         </dd>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, release, timeout, inputs).doInsideSandbox{sandbox -> ...}</code></dt>
+        <dt><code>colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).doInsideSandbox{sandbox -> ...}</code></dt>
         <dd>
             <p>
                 Starts a sandbox under specified space name and runs the delegate passing it the sandbox json details.

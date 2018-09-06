@@ -6,7 +6,5 @@ public class CreateSandboxResponse
 {
     @SerializedName("id")
     public String id;
-    @SerializedName("name")
-    public String name;
 }
 

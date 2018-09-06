@@ -38,7 +38,7 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
         sandboxAPI = retrofit.create(SandboxAPISpec.class);
     }
 
-    public ResponseData<SingleSandbox> getSandboxById(String spaceName, String sandboxId) throws RuntimeException, IOException {
+    public ResponseData<Object> getSandboxById(String spaceName, String sandboxId) throws RuntimeException, IOException {
         return execute(sandboxAPI.getSandboxById(this.connection.getAuthorizationHeader(), spaceName, sandboxId));
     }
 
