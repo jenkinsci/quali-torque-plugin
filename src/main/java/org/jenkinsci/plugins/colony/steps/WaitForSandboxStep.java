@@ -107,10 +107,15 @@ public class WaitForSandboxStep extends Step {
         }
 
         private ResponseData<Object> getSandbox(String spaceName, String sandboxId) throws IOException {
-
             ResponseData<Object> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
-                throw new AbortException(String.format("status_code: %s error: %s", sandboxByIdRes.getStatusCode(), sandboxByIdRes.getError()));
+                for(int i=0; i<5; i++){
+                    sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
+                    if (sandboxByIdRes.isSuccessful()){
+                        return sandboxByIdRes;
+                    }
+                }
+                throw new AbortException(String.format("failed after 5 retries. status_code: %s error: %s", sandboxByIdRes.getStatusCode(), sandboxByIdRes.getError()));
             }
             return sandboxByIdRes;
 
