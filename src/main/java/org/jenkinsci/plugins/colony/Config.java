@@ -39,9 +39,8 @@ public class Config extends AbstractDescribableImpl<Config> {
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException
         {
             String address = json.getString("address");
-            int port = json.getInt("port");
             String token = json.getString("token");
-            apiConnection = new SandboxServiceConnection(address, port, token,10, 30);
+            apiConnection = new SandboxServiceConnection(address, token,10, 30);
             save();
             return super.configure(req,json);
         }
@@ -56,10 +55,6 @@ public class Config extends AbstractDescribableImpl<Config> {
 
         public String getAddress() {
             return apiConnection.address;
-        }
-
-        public int getPort() {
-            return apiConnection.port;
         }
 
         public String getToken() {
