@@ -31,10 +31,16 @@ THE SOFTWARE.
     <f:entry field="blueprint" title="Blueprint">
         <f:textbox />
     </f:entry>
+    <f:entry field="duration" title="Duration">
+            <f:textbox />
+        </f:entry>
     <f:entry field="artifacts" title="Artifacts">
         <f:textbox />
     </f:entry>
     <f:entry field="inputs" title="User inputs">
+            <f:textbox />
+    </f:entry>
+    <f:entry field="timeout" title="Start sandbox timeout">
             <f:textbox />
     </f:entry>
 </j:jelly>

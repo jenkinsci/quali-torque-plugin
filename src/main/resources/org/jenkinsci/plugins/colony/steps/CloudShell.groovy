@@ -12,8 +12,8 @@ class CloudShell implements Serializable {
         this.script = script
     }
 
-    Blueprint blueprint(String spaceName, String blueprint, String sandboxName, Map<String, String> artifacts, Integer timeout, Map<String, String> inputs = [:]) {
-        return new Blueprint(this, spaceName, blueprint, sandboxName, artifacts, timeout, inputs)
+    Blueprint blueprint(String spaceName, String blueprint, String sandboxName, String duration, Map<String, String> artifacts, Map<String, String> inputs, Integer timeout) {
+        return new Blueprint(this, spaceName, blueprint, sandboxName, duration, artifacts, inputs, timeout)
     }
 
     def endSandbox(String spaceName, String sandboxId) {
@@ -37,25 +37,27 @@ class CloudShell implements Serializable {
         private final Map<String, String> artifacts
         private final Map<String, String> inputs
         private String sandboxName
+        private String duration
         private int timeout
         private String spaceName
 
-        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, Map<String, String> artifacts, Integer timeout, Map<String, String> inputs = [:]) {
+        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, String duration, Map<String, String> artifacts, Map<String, String> inputs, Integer timeout) {
             this.spaceName = spaceName
             this.timeout = timeout
             this.sandboxName = sandboxName
             this.blueprint = blueprint
+            this.duration = duration
             this.cs = cs
             this.artifacts = artifacts
             this.inputs = inputs
         }
 
         Object startSandbox(boolean endSandboxOnFail = true) {
-            def sandboxJSONObject
+            def sandboxJSONObject = null
             def sandboxId
             cs.node {
                 try {
-                    sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, artifacts: artifacts, inputs: inputs)
+                    sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, duration: duration, artifacts: artifacts, inputs: inputs)
                     cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
                     String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")

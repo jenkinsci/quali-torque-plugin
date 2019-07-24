@@ -5,10 +5,10 @@
         The <code>colony</code> variable offers convenient access to colony-related functions from a Pipeline script.
     </p>
     <dl>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs)</code></dt>
+        <dt><code>colony.blueprint(spaceName, name, sandboxName, duration, artifacts, inputs, timeout)</code></dt>
         <dd>
             <p>
-                Creates a blueprint from the specified name with a specified space name, sandbox name, artifacts, timeout and user inputs.
+                Creates a blueprint from the specified name with a specified space name, sandbox name, artifacts, duration, timeout and user inputs.
                 this blueprint object has the following methods:
                 startSandbox, doInsideSandbox, endSandbox
             </p>
@@ -37,7 +37,7 @@
         <dt>Sample pipeline in groovy</dt>
         <dd>
             <p>
-                sandbox = colony.blueprint("SPACE_NAME", "BLUEPRINT_NAME", "SANDBOX_NAME", ArtifactDictionary, 5).startSandbox()
+                sandbox = colony.blueprint("SPACE_NAME", "BLUEPRINT_NAME", "SANDBOX_NAME", 120, ArtifactDictionary, InputsDictionary, 15).startSandbox()
                 echo "startSandbox returned: ${sandbox}"
                 echo "sandbox.id: " + sandbox.id
                 echo "sandbox.name: " + sandbox.name
