@@ -10,7 +10,7 @@ try {
                             "testing startSandbox": {
                                 def sandbox // for the endSandbox in the finally
                                 try {
-                                    sandbox = colony.blueprint("Trial", "fasty-k8s", "testing_startSandbox", artifacts, 5, inputs).startSandbox(true) //true means: endSandboxOnFail
+                                    sandbox = colony.blueprint("Trial", "fasty-k8s", "testing_startSandbox", "PT30M", artifacts, 5, inputs).startSandbox(true) //true means: endSandboxOnFail
                                     printSandbox(sandbox, "startSandbox")
                                 }
                                 catch (Exception ex) {
@@ -24,7 +24,7 @@ try {
                                 }
                             },
                             "testing doInsideSandbox": {
-                                colony.blueprint("Trial", "fasty-k8s", "testing_doInsideSandbox", artifacts, 5, inputs).doInsideSandbox() { sandbox_details ->
+                                colony.blueprint("Trial", "fasty-k8s", "testing_doInsideSandbox", "PT30M", artifacts, 5, inputs).doInsideSandbox() { sandbox_details ->
                                     printSandbox(sandbox_details, "doInsideSandbox")
                                 }
                             })
