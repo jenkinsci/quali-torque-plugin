@@ -11,7 +11,7 @@
   </parent>
 
   <artifactId>colony</artifactId>
-  <version>1.0.22</version>
+  <version>1.0.23</version>
   <packaging>hpi</packaging>
 
   <properties>
