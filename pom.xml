@@ -6,10 +6,7 @@
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>2.3</version>
-    <relativePath/><!-- 
-    <parent> -->
-    
-    <!-- </parent> -->
+    <relativePath/>
 
     <artifactId>colony</artifactId>
     <version>1.0.23</version>
