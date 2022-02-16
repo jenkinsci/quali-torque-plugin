@@ -2,13 +2,13 @@
 
 ## Prerequisite
 
-1) colony server must be running.
+1) Torque server must be running.
 
 2) Jenkins server 2.3 and above.
 
 ## Architecture
 
-1) open port between Jenkins Slaves and the colony API Server
+1) open port between Jenkins Slaves and the Torque API Server
 
 
 ## Installation
@@ -20,21 +20,21 @@
 
 4) Restart jenkins
 
-## Configuring colony in Jenkins
+## Configuring Torque in Jenkins
 1) Navigate to the main Jenkins settings page
 
-2) Fill all fields under "colony connection" section.
+2) Fill all fields under "Torque connection" section.
 
 ![Alt text](images/global_settings.png?raw=true)
 
 ### Pipeline support (Workflow)
 
-How to use 'colony' DSL:
+How to use 'torque' DSL:
 
 Blueprint:
-  * Use **colony.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
+  * Use **torque.blueprint** to define a Blueprint object that can then be used to perform operations on a blueprint.
 ```
-blueprint = colony.blueprint('blueprint_name', ['appname1': 'version', 'appname2': 'version'])
+blueprint = torque.blueprint('blueprint_name', ['appname1': 'version', 'appname2': 'version'])
 ```
   * Use **blueprint.startSandbox** to starts a sandbox and returns a sandbox object which you could stop later.
 ```

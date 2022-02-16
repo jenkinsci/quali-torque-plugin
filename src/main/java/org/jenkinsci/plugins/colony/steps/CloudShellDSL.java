@@ -10,10 +10,12 @@ import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
 @Extension
 public class CloudShellDSL extends GlobalVariable {
 
+    @javax.annotation.Nonnull
     @Override public String getName() {
-        return "colony";
+        return "torque";
     }
 
+    @javax.annotation.Nonnull
     @Override public Object getValue(CpsScript script) throws Exception {
         Binding binding = script.getBinding();
         Object colony;

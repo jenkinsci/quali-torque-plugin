@@ -2,10 +2,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
     <p>
-        The <code>colony</code> variable offers convenient access to colony-related functions from a Pipeline script.
+        The <code>torque</code> variable offers convenient access to torque-related functions from a Pipeline script.
     </p>
     <dl>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, duration, artifacts, inputs, timeout)</code></dt>
+        <dt><code>torque.blueprint(spaceName, name, sandboxName, duration, artifacts, inputs, timeout)</code></dt>
         <dd>
             <p>
                 Creates a blueprint from the specified name with a specified space name, sandbox name, artifacts, duration, timeout and user inputs.
@@ -13,14 +13,14 @@
                 startSandbox, doInsideSandbox, endSandbox
             </p>
         </dd>
-        <dt><code>sandbox = colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).startSandbox()</code></dt>
+        <dt><code>sandbox = torque.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).startSandbox()</code></dt>
         <dd>
             <p>
                 Starts a sandbox under specified space name from blueprint created and returns <code>sandbox</code> json details.
                 the json details can be written to json valid string using sandbox.toString()
             </p>
         </dd>
-        <dt><code>colony.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).doInsideSandbox{sandbox -> ...}</code></dt>
+        <dt><code>torque.blueprint(spaceName, name, sandboxName, artifacts, timeout, inputs).doInsideSandbox{sandbox -> ...}</code></dt>
         <dd>
             <p>
                 Starts a sandbox under specified space name and runs the delegate passing it the sandbox json details.
@@ -28,7 +28,7 @@
                 the json details can be written to json valid string using sandbox.toString()
             </p>
         </dd>
-        <dt><code>colony.endSandbox(spaceName, sandbox.id)</code></dt>
+        <dt><code>torque.endSandbox(spaceName, sandbox.id)</code></dt>
         <dd>
             <p>
                 ends the sandbox under specified space name.
@@ -37,7 +37,7 @@
         <dt>Sample pipeline in groovy</dt>
         <dd>
             <p>
-                sandbox = colony.blueprint("SPACE_NAME", "BLUEPRINT_NAME", "SANDBOX_NAME", 120, ArtifactDictionary, InputsDictionary, 15).startSandbox()
+                sandbox = torque.blueprint("SPACE_NAME", "BLUEPRINT_NAME", "SANDBOX_NAME", 120, ArtifactDictionary, InputsDictionary, 15).startSandbox()
                 echo "startSandbox returned: ${sandbox}"
                 echo "sandbox.id: " + sandbox.id
                 echo "sandbox.name: " + sandbox.name
