@@ -5,7 +5,7 @@
             <f:textbox default="https://app.qtorque.io"/>
         </f:entry>
         <f:entry title="Token" field="token">
-        <f:textbox default=""/>
+        <f:password/>
     </f:entry>
   </f:section>
 </j:jelly>
