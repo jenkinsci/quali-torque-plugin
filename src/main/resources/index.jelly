@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-  This plugin allows using colony API Server
+  This plugin allows using Torque API Server
 </div>

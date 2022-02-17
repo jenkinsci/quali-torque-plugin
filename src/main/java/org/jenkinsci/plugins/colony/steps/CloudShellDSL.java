@@ -11,7 +11,7 @@ import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
 public class CloudShellDSL extends GlobalVariable {
 
     @Override public String getName() {
-        return "colony";
+        return "torque";
     }
 
     @Override public Object getValue(CpsScript script) throws Exception {
