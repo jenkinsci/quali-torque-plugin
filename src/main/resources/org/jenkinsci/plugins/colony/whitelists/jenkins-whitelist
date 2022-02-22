@@ -1,6 +1,0 @@
-#colony jenkins plugin
-
-method net.sf.json.JSON toString
-method net.sf.json.JSON toString int
-method net.sf.json.JSON toString int int
-method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object

@@ -23,7 +23,7 @@ try {
                 }
                 stage('Checkout') {
                     devops.resetWorkspace(devopsVersion)
-                    dir('colony') {
+                    dir('torque') {
                         def scmVars = checkout scm
                         devops.logalore(devopsVersion, scmVars)
                         devops.grantFullPermissions('.')
@@ -32,7 +32,7 @@ try {
                 }
 
                 stage('Clean, Package & upload') {
-                    dir('colony') {
+                    dir('torque') {
                         if (env.BRANCH_NAME.equals('master')) {
                             echo "in master branch - running maven with clean"
                             devops.runSh('mvn -B clean package')
@@ -46,12 +46,12 @@ try {
                             devops.runSh("echo '${env.BRANCH_NAME}' > branch.txt")
                             devops.runSh('ls')
                             echo "${changeset}"
-                            devops.uploadArtifact("colony.hpi")
-                            echo "uploadArtifact colony.hpi"
+                            devops.uploadArtifact("torque.hpi")
+                            echo "uploadArtifact torque.hpi"
                             devops.uploadToS3("branch.txt", "${devops.constants.misc().BucketName}/applications/jenkins/${changeset}")
                             echo "uploadToS3 branch.txt"
-                            devops.uploadToS3("colony.hpi", "${devops.constants.misc().BucketName}/applications/jenkins/${changeset}")
-                            echo "uploadToS3 colony.hpi"
+                            devops.uploadToS3("torque.hpi", "${devops.constants.misc().BucketName}/applications/jenkins/${changeset}")
+                            echo "uploadToS3 torque.hpi"
                         }
                     }
                 }
@@ -70,7 +70,7 @@ try {
                     artifacts['cs18-postgres'] = "applications/cs18-postgres/"
 
 
-                    colony.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", artifacts, 20).doInsideSandbox(false)
+                    torque.blueprint("demo-trial", "n-ca-jenkins-aws", "jenkinsAndCs18ForPlugin", artifacts, 20).doInsideSandbox(false)
                         { sandbox ->
                             echo "sandbox env: " + sandbox.toString()
 
