@@ -4,11 +4,11 @@ import com.google.gson.Gson
 import net.sf.json.JSONObject
 import org.jenkinsci.plugins.workflow.cps.CpsScript
 
-class CloudShell implements Serializable {
+class Torque implements Serializable {
 
     private CpsScript script
 
-    CloudShell(CpsScript script) {
+    Torque(CpsScript script) {
         this.script = script
     }
 
@@ -32,7 +32,7 @@ class CloudShell implements Serializable {
     }
 
     def static class Blueprint implements Serializable {
-        public final CloudShell cs
+        public final Torque cs
         private final String blueprint
         private final Map<String, String> artifacts
         private final Map<String, String> inputs
@@ -41,7 +41,7 @@ class CloudShell implements Serializable {
         private int timeout
         private String spaceName
 
-        private Blueprint(CloudShell cs, String spaceName, String blueprint, String sandboxName, String duration, Map<String, String> artifacts, Map<String, String> inputs, Integer timeout) {
+        private Blueprint(Torque cs, String spaceName, String blueprint, String sandboxName, String duration, Map<String, String> artifacts, Map<String, String> inputs, Integer timeout) {
             this.spaceName = spaceName
             this.timeout = timeout
             this.sandboxName = sandboxName
