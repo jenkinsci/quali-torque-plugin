@@ -2,3 +2,5 @@
 1. sandbox-jenkins-plugin\src\main\java\org\jenkinsci\plugins\torque\Config.java
 34-35 (changed @symbol("colony") to @symbol("torque"))
 1. Changed colony.iml in root to torque.iml
+
+link to story - https://cs18.visualstudio.com/cs18/_boards/board/t/Terminators/Stories/?workitem=6726
