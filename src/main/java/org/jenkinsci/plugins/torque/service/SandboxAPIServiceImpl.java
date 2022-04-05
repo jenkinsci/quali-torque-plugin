@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.torque.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.jenkinsci.plugins.torque.api.*;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -26,12 +25,9 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(connection.connectionTimeoutSec,TimeUnit.SECONDS);
         builder.readTimeout(connection.readTimeoutSec, TimeUnit.SECONDS);
+        OkHttpClient client= builder.build();
+
         String baseUrl = String.format("%1$s",connection.address);
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        OkHttpClient client= builder.addInterceptor(interceptor).build();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
