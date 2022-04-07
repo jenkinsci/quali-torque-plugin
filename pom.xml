@@ -20,6 +20,15 @@
     <jenkins-test-harness.version>2.2</jenkins-test-harness.version>
   </properties>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
   <name>Jenkins Torque plugin</name>
   <description>Integrates Jenkins with Torque</description>
   <url>https://community.qtorque.io/jenkins-67/launching-a-sandbox-from-jenkins-pipeline-277</url>
