@@ -25,6 +25,10 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(connection.connectionTimeoutSec,TimeUnit.SECONDS);
         builder.readTimeout(connection.readTimeoutSec, TimeUnit.SECONDS);
+
+        OkHttpClientBuilderExtensions.injectHeader(builder,
+                "User-Agent", "Torque-Plugin-Jenkins/" + VersionUtils.PackageVersion);
+
         OkHttpClient client= builder.build();
 
         String baseUrl = String.format("%1$s",connection.address);
