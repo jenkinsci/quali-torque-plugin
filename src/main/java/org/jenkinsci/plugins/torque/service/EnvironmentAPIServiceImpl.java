@@ -12,10 +12,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class SandboxAPIServiceImpl implements SandboxAPIService{
-    private SandboxAPISpec sandboxAPI;
-    private SandboxServiceConnection connection;
-    public SandboxAPIServiceImpl(SandboxServiceConnection connection) {
+public class EnvironmentAPIServiceImpl implements EnvironmentAPIService {
+    private EnvironmentAPISpec sandboxAPI;
+    private EnvironmentServiceConnection connection;
+    public EnvironmentAPIServiceImpl(EnvironmentServiceConnection connection) {
         this.connection = connection;
 
         Gson gson = new GsonBuilder()
@@ -39,19 +39,19 @@ public class SandboxAPIServiceImpl implements SandboxAPIService{
                 .build();
 
 
-        sandboxAPI = retrofit.create(SandboxAPISpec.class);
+        sandboxAPI = retrofit.create(EnvironmentAPISpec.class);
     }
 
-    public ResponseData<Object> getSandboxById(String spaceName, String sandboxId) throws RuntimeException, IOException {
-        return execute(sandboxAPI.getSandboxById(this.connection.getAuthorizationHeader(), spaceName, sandboxId));
+    public ResponseData<EnvironmentResponse> getEnvironmentById(String spaceName, String environmentId) throws RuntimeException, IOException {
+        return execute(sandboxAPI.getEnvironmentById(this.connection.getAuthorizationHeader(), spaceName, environmentId));
     }
 
-    public ResponseData<CreateSandboxResponse> createSandbox(String spaceName, final CreateSandboxRequest req) throws IOException {
-        return execute(sandboxAPI.createSandbox(this.connection.getAuthorizationHeader(), spaceName, req));
+    public ResponseData<CreateEnvResponse> createEnvironment(String spaceName, final CreateSandboxRequest req) throws IOException {
+        return execute(sandboxAPI.createEnvironment(this.connection.getAuthorizationHeader(), spaceName, req));
     }
 
-    public ResponseData<Void> deleteSandbox(String spaceName, String sandboxId) throws IOException {
-        return execute(sandboxAPI.deleteSandbox(this.connection.getAuthorizationHeader(), spaceName, sandboxId));
+    public ResponseData<Void> deleteEnvironment(String spaceName, String environmentId) throws IOException {
+        return execute(sandboxAPI.deleteEnvironment(this.connection.getAuthorizationHeader(), spaceName, environmentId));
     }
 
     private static <T> ResponseData<T> parseResponse(final Response<T> response) throws IOException {
