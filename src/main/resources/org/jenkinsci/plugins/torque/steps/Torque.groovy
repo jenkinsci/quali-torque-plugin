@@ -92,7 +92,7 @@ class Torque implements Serializable {
                     String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     def sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
-                    sandbox_status = sandboxJSONObject.sandbox_status
+                    sandbox_status = sandboxJSONObject.details.state.currentState
                     body.call(sandboxJSONObject)
                 }
                 finally {

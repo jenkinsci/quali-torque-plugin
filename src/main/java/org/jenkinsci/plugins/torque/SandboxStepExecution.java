@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.torque;
 
-import org.jenkinsci.plugins.torque.service.SandboxAPIService;
+import org.jenkinsci.plugins.torque.service.EnvironmentAPIService;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 
@@ -11,11 +11,11 @@ import javax.annotation.Nonnull;
  */
 public abstract class SandboxStepExecution<T> extends SynchronousNonBlockingStepExecution<T> {
 
-    protected transient SandboxAPIService sandboxAPIService = null;
+    protected transient EnvironmentAPIService environmentAPIService = null;
 
     protected SandboxStepExecution(@Nonnull StepContext context) throws Exception {
         super(context);
-        sandboxAPIService = Config.CreateSandboxAPIService();
+        environmentAPIService = Config.CreateSandboxAPIService();
     }
 
     @Override

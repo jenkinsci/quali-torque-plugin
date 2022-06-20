@@ -4,9 +4,9 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import net.sf.json.JSONObject;
-import org.jenkinsci.plugins.torque.service.SandboxAPIService;
-import org.jenkinsci.plugins.torque.service.SandboxAPIServiceImpl;
-import org.jenkinsci.plugins.torque.service.SandboxServiceConnection;
+import org.jenkinsci.plugins.torque.service.EnvironmentAPIService;
+import org.jenkinsci.plugins.torque.service.EnvironmentAPIServiceImpl;
+import org.jenkinsci.plugins.torque.service.EnvironmentServiceConnection;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -24,11 +24,11 @@ public class Config extends AbstractDescribableImpl<Config> {
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-    public static SandboxAPIService CreateSandboxAPIService() throws Exception { 
-        SandboxServiceConnection apiConnection = new SandboxServiceConnection(
+    public static EnvironmentAPIService CreateSandboxAPIService() throws Exception {
+        EnvironmentServiceConnection apiConnection = new EnvironmentServiceConnection(
             DESCRIPTOR.getAddress(), DESCRIPTOR.getToken(), 10, 30);
 //        return new SandboxAPIServiceMock(); //TODO: change back to real impl
-        return new SandboxAPIServiceImpl(apiConnection);
+        return new EnvironmentAPIServiceImpl(apiConnection);
     }
 
     @Symbol("torque")

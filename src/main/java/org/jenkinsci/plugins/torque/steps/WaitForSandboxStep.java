@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.torque.steps;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.model.Run;
@@ -85,32 +84,31 @@ public class WaitForSandboxStep extends Step {
 
         public String waitForSandbox(String spaceName, String sandboxId, double timeoutMinutes) throws IOException, InterruptedException, TimeoutException {
 
-            SingleSandbox sandboxData = null;
             long startTime = System.currentTimeMillis();
             while ((System.currentTimeMillis()-startTime) < timeoutMinutes*1000*60)
             {
-                ResponseData<Object> sandbox = getSandbox(spaceName, sandboxId);
-                if(sandbox != null)
+                ResponseData<EnvironmentResponse> responseData = getEnvironment(spaceName, sandboxId);
+                if(responseData.isSuccessful())
                 {
-                    sandboxData = new Gson().fromJson(sandbox.getRawBodyJson(), SingleSandbox.class);
+                    EnvironmentResponse environmentData = responseData.getData();
 
-                    if (!sandboxData.sandboxStatus.equals(this.prevStatus)) {
-                        prevStatus = sandboxData.sandboxStatus;
+                    if (!environmentData.details.state.currentState.equals(this.prevStatus)) {
+                        prevStatus = environmentData.details.state.currentState;
                     }
 
-                    if(waitForSandbox(sandboxData))
-                        return sandbox.getRawBodyJson();
+                    if(waitForSandbox(environmentData.details))
+                        return responseData.getRawBodyJson();
                 }
                 Thread.sleep(2000);
             }
             throw new TimeoutException(String.format(Messages.WaitingForSandboxTimeoutError(),timeoutMinutes));
         }
 
-        private ResponseData<Object> getSandbox(String spaceName, String sandboxId) throws IOException {
-            ResponseData<Object> sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
+        private ResponseData<EnvironmentResponse> getEnvironment(String spaceName, String sandboxId) throws IOException {
+            ResponseData<EnvironmentResponse> sandboxByIdRes= environmentAPIService.getEnvironmentById(spaceName, sandboxId);
             if (!sandboxByIdRes.isSuccessful()){
                 for(int i=0; i<5; i++){
-                    sandboxByIdRes=sandboxAPIService.getSandboxById(spaceName, sandboxId);
+                    sandboxByIdRes= environmentAPIService.getEnvironmentById(spaceName, sandboxId);
                     if (sandboxByIdRes.isSuccessful()){
                         return sandboxByIdRes;
                     }
@@ -121,41 +119,41 @@ public class WaitForSandboxStep extends Step {
 
         }
 
-        private boolean waitForSandbox(SingleSandbox sandbox) throws IOException {
-            if(sandbox.sandboxStatus.equals(SandboxStatus.LAUNCHING))
+        private boolean waitForSandbox(EnvironmentDetailsResponse details) throws IOException {
+            if(details.computedStatus.equals(SandboxStatus.LAUNCHING))
                 return false;
-            if(sandbox.sandboxStatus.equals(SandboxStatus.ACTIVE))
+            if(details.computedStatus.equals(SandboxStatus.ACTIVE))
                 return true;
-            if(sandbox.sandboxStatus.equals(SandboxStatus.ACTIVE_WITH_ERROR)) {
-                String app_statuses_str = formatAppsDeploymentStatuses(sandbox);
-                throw new AbortException(Messages.SandboxDeploymentFailedError(sandbox.sandboxStatus, app_statuses_str));
+            if(details.computedStatus.equals(SandboxStatus.ACTIVE_WITH_ERROR)) {
+                String grain_statuses_str = formatGrainsDeploymentStatuses(details);
+                throw new AbortException(Messages.SandboxDeploymentFailedError(details.computedStatus, grain_statuses_str));
             }
 
-            throw new AbortException(Messages.UnknownSandboxStatusError(sandbox.id, sandbox.sandboxStatus));
+            throw new AbortException(Messages.UnknownSandboxStatusError(details.id, details.computedStatus));
         }
 
-        private String formatAppsDeploymentStatuses(SingleSandbox sandbox)throws IOException{
+        private String formatGrainsDeploymentStatuses(EnvironmentDetailsResponse environment)throws IOException{
             StringBuilder builder = new StringBuilder();
             boolean isFirst = true;
-            for (Service service:sandbox.applications){
+            for (EnvironmentGrainResponse grain:environment.state.getGrains()) {
                 if (isFirst)
-                    isFirst= false;
+                    isFirst = false;
                 else
                     builder.append(", ");
 
-                builder.append(String.format("%s: %s", service.name, service.status));
+                builder.append(String.format("%s: %s", grain.getName(), grain.getState()));
             }
 
-            if (!sandbox.sandboxErrors.isEmpty()) {
+            if (!environment.state.getErrors().isEmpty()) {
                 builder.append(System.getProperty("line.separator"));
                 builder.append("Sandbox Errors: ");
-                for (SandboxErrorService service : sandbox.sandboxErrors) {
+                for (EnvironmentErrorResponse error : environment.state.getErrors()) {
                     if (isFirst)
                         isFirst = false;
                     else
                         builder.append(", ");
 
-                    builder.append(String.format("%s: %s", service.time, service.code, service.message));
+                    builder.append(String.format("%s", error.getMessage()));
                 }
             }
             return builder.toString();

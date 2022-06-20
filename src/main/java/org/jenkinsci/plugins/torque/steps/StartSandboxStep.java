@@ -10,7 +10,7 @@ import org.jenkinsci.plugins.torque.PluginConstants;
 import org.jenkinsci.plugins.torque.PluginHelpers;
 import org.jenkinsci.plugins.torque.SandboxStepExecution;
 import org.jenkinsci.plugins.torque.api.CreateSandboxRequest;
-import org.jenkinsci.plugins.torque.api.CreateSandboxResponse;
+import org.jenkinsci.plugins.torque.api.CreateEnvResponse;
 import org.jenkinsci.plugins.torque.api.ResponseData;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -75,7 +75,7 @@ public class StartSandboxStep extends Step {
             taskListener.getLogger().println(Messages.StartSandbox_StartingMsg());
             String sandboxName = this.sandboxName.isEmpty()? PluginHelpers.GenerateSandboxName():this.sandboxName;
             CreateSandboxRequest req = new CreateSandboxRequest(this.blueprint, sandboxName, this.artifacts,true, this.inputs, this.duration);
-            ResponseData<CreateSandboxResponse> res = sandboxAPIService.createSandbox(this.spaceName, req);
+            ResponseData<CreateEnvResponse> res = environmentAPIService.createEnvironment(this.spaceName, req);
             if(!res.isSuccessful())
                 throw new AbortException(String.format("status_code: %s error: %s", res.getStatusCode(), res.getError()));
             return res.getData().id;
