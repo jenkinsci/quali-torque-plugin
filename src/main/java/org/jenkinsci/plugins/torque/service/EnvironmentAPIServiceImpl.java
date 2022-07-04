@@ -19,7 +19,6 @@ public class EnvironmentAPIServiceImpl implements EnvironmentAPIService {
         this.connection = connection;
 
         Gson gson = new GsonBuilder()
-                .setLenient()
                 .create();
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
