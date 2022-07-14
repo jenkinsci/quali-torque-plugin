@@ -10,8 +10,10 @@
     <relativePath/>
   </parent>
 
-  <artifactId>jenkins-torque-plugin</artifactId>
-  <version>2.0.1</version>
+  <groupId>io.jenkins.plugins</groupId>
+  <artifactId>quali-torque</artifactId>
+  <name>Quali Torque</name>
+  <version>2.0.2</version>
   <packaging>hpi</packaging>
 
   <properties>
