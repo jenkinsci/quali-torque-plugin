@@ -12,7 +12,6 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>quali-torque</artifactId>
-  <name>Quali Torque</name>
   <version>2.0.2</version>
   <packaging>hpi</packaging>
 
@@ -32,7 +31,7 @@
     </resources>
   </build>
 
-  <name>Jenkins Torque plugin</name>
+  <name>Quali Torque plugin</name>
   <description>Integrates Jenkins with Torque</description>
   <url>https://community.qtorque.io/jenkins-67/launching-a-sandbox-from-jenkins-pipeline-277</url>
 
