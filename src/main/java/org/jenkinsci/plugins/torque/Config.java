@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.torque;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.torque.service.EnvironmentAPIService;
 import org.jenkinsci.plugins.torque.service.EnvironmentAPIServiceImpl;
@@ -34,7 +35,7 @@ public class Config extends AbstractDescribableImpl<Config> {
     @Symbol("torque")
     public static final class DescriptorImpl extends Descriptor<Config> {
         private String address;
-        private String token;
+        private Secret token;
 
         public DescriptorImpl() {
             super(Config.class);
@@ -53,7 +54,7 @@ public class Config extends AbstractDescribableImpl<Config> {
             return address;
         }
 
-        public String getToken() {
+        public Secret getToken() {
             return token;
         }
 
@@ -64,7 +65,7 @@ public class Config extends AbstractDescribableImpl<Config> {
         }
 
         @DataBoundSetter
-        public void setToken(String token) {
+        public void setToken(Secret token) {
             this.token = token;
             save();
         }
