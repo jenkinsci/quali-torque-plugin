@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import hudson.Extension;
 import org.jenkinsci.plugins.workflow.cps.CpsScript;
 import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
+import org.jenkinsci.plugins.workflow.cps.GroovySourceFileAllowlist;
 
 import javax.annotation.Nonnull;
 
@@ -32,4 +33,13 @@ public class TorqueDSL extends GlobalVariable {
         return torque;
     }
 
+    @Extension
+    public static class TorqueAllowlist extends GroovySourceFileAllowlist {
+        private final String scriptUrl = TorqueDSL.class.getResource("Torque.groovy").toString();
+
+        @Override
+        public boolean isAllowed(String groovyResourceUrl) {
+            return groovyResourceUrl.equals(scriptUrl);
+        }
+    }
 }
