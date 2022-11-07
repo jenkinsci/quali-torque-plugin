@@ -16,7 +16,7 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <revision>2.0.4</revision>
+    <revision>2.0.5</revision>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.319.3</jenkins.version>
     <jenkins-test-harness.version>2.72</jenkins-test-harness.version>
@@ -35,7 +35,7 @@
 
   <name>Quali Torque plugin</name>
   <description>Integrates Jenkins with Torque</description>
-  <url>https://community.qtorque.io/jenkins-67/launching-a-sandbox-from-jenkins-pipeline-277</url>
+  <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <licenses>
     <license>
