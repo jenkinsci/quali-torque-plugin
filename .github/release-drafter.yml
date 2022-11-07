@@ -1,3 +1,1 @@
 _extends: .github
-tag-template: torque_$NEXT_MINOR_VERSION
-
