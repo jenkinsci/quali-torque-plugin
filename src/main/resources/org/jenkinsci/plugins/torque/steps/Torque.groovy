@@ -58,20 +58,20 @@ class Torque implements Serializable {
             cs.node {
                 try {
                     sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, duration: duration, artifacts: artifacts, inputs: inputs)
-                    cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
+                    cs.script.echo("health check - waiting for environment ${sandboxId} to become ready for testing...")
                     String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
                 }
                 catch (Exception ex) {
-                    cs.script.echo("** Exception thrown during sandbox creation **")
+                    cs.script.echo("** Exception thrown during environment creation **")
                     if (sandboxId != null) {
-                        cs.script.echo("Sandbox id:${sandboxId}")
+                        cs.script.echo("Environment id:${sandboxId}")
                         if (endSandboxOnFail) {
-                            cs.script.echo("End sandbox:${sandboxId}")
+                            cs.script.echo("End environment:${sandboxId}")
                             cs.script.endSandbox(spaceName: spaceName, sandboxId: sandboxId)
                         } else {
-                            cs.script.echo("Keeping sandbox:${sandboxId} up.")
+                            cs.script.echo("Keeping environment:${sandboxId} up.")
                         }
                     }
                     throw ex
@@ -88,7 +88,7 @@ class Torque implements Serializable {
                 def sandboxId = cs.script.startSandbox(spaceName: spaceName, blueprint: blueprint, sandboxName: sandboxName, artifacts: artifacts, inputs: inputs)
                 def sandbox_status = ""
                 try {
-                    cs.script.echo("health check - waiting for sandbox ${sandboxId} to become ready for testing...")
+                    cs.script.echo("health check - waiting for environment ${sandboxId} to become ready for testing...")
                     String sandboxString = cs.script.waitForSandbox(spaceName: spaceName, sandboxId: sandboxId, timeout: timeout)
                     cs.script.echo("health check done! returned:${sandboxString}")
                     def sandboxJSONObject = JSONObject.fromObject(sandboxString)//JSONSerializer.toJSON(sandboxString)
