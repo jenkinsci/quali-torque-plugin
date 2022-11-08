@@ -16,7 +16,7 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <revision>2.0.5</revision>
+    <revision>2.1.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.319.3</jenkins.version>
     <jenkins-test-harness.version>2.72</jenkins-test-harness.version>

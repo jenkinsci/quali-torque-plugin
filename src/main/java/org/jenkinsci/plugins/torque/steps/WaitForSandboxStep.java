@@ -146,7 +146,7 @@ public class WaitForSandboxStep extends Step {
 
             if (!environment.state.getErrors().isEmpty()) {
                 builder.append(System.getProperty("line.separator"));
-                builder.append("Sandbox Errors: ");
+                builder.append("Environment Errors: ");
                 for (EnvironmentErrorResponse error : environment.state.getErrors()) {
                     if (isFirst)
                         isFirst = false;
